@@ -1,0 +1,17 @@
+{
+  "name": "scripts",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "sign-voucher.js",
+  "scripts": {
+    "dev": "nodemon sign-voucher.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ethers": "^5.8.0",
+    "nodemon": "^3.1.10"
+  }
+}

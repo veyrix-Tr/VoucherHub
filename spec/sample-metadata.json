@@ -1,0 +1,9 @@
+{
+  "name": "Domino's Pizza 20% Off Voucher",
+  "merchant": "Domino's",
+  "description": "20% discount on all medium pizzas. Valid only for dine-in and takeaway.",
+  "expiry": 1735689600,
+  "location": "All Domino's outlets in India",
+  "terms": "Cannot be combined with other offers. Only 1 voucher per bill.",
+  "image": "ipfs://QmSomePizzaImageHash"
+}

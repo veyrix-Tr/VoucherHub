@@ -1,0 +1,16 @@
+{
+  "voucherData": {
+    "voucherId": 1,
+    "merchant": "0x90f79bf6eb2c4f870365e785982e1f101e93b906",
+    "maxMint": 100,
+    "expiry": 1735689600,
+    "metadataHash": "0x3eb0fd198f972f1e896de53ca4790a12000a63ccac149e44794f32ab7a778a5e",
+    "metadataCID": "Qm...actual_cid...",
+    "price": {
+      "type": "BigNumber",
+      "hex": "0xb1a2bc2ec50000"
+    },
+    "nonce": 1
+  },
+  "signature": "0x4261654dd58c5257b82d190b4bfee7b3c0f19f154e124a29c7ce6566952a9530117169971da884789e4c51876480091564efff6f1ceacc0f6931efa1447e253b1b"
+}
