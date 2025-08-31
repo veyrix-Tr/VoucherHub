@@ -40,7 +40,7 @@ contract VoucherERC1155 is ERC1155, EIP712, Ownable, ReentrancyGuard {
         "VoucherData(uint256 voucherId,address merchant,uint256 maxMint,uint256 expiry,bytes32 metadataHash,string metadataCID,uint256 price,uint256 nonce)"
     );
 
-    function _hashVoucher(VoucherData memory _voucherData) internal pure returns (bytes32) {
+    function _hashVoucher(VoucherData memory _voucherData) public pure returns (bytes32) {
         bytes32 metadataCIDHash = keccak256(bytes(_voucherData.metadataCID));
         return keccak256(abi.encode(
             VOUCHER_TYPEHASH,
@@ -53,6 +53,10 @@ contract VoucherERC1155 is ERC1155, EIP712, Ownable, ReentrancyGuard {
             _voucherData.price,
             _voucherData.nonce
         ));
+    }
+    
+    function hashTypedDataV4Public(bytes32 structHash) public view returns (bytes32) {
+        return _hashTypedDataV4(structHash);
     }
 
     function _verifyVoucher(VoucherData memory _voucherData, bytes memory signature) internal view returns (address) {
