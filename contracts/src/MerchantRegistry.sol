@@ -35,4 +35,7 @@ contract MerchantRegistry is Ownable {
         emit MerchantStatusUpdated(_merchant, _status);
     }
 
+    function isMerchant(address _merchant) public view returns(bool) {
+        return merchants[_merchant].merchantAddress != address(0) && merchants[_merchant].isActive;
+    }
 }
