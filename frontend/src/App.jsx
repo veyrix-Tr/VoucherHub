@@ -1,10 +1,17 @@
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import ConnectPage from "./Pages/ConnectPage.jsx";
+import MerchantPage from "./Pages/MerchantPage.jsx";
+import AdminPage from "./Pages/AdminPage.jsx";
+import Marketplace from "./Pages/Marketplace.jsx";
 
-function App() {
+export default function App() {
   return (
-    <div>
-      Hello
-    </div>
-  )
+    <Routes>
+      <Route path="/" element={<ConnectPage />} />
+      <Route path="/merchant" element={<MerchantPage />} />
+      <Route path="/admin" element={<AdminPage />} />
+      <Route path="/marketplace" element={<Marketplace />} />
+    </Routes>
+  );
 }
-
-export default App
