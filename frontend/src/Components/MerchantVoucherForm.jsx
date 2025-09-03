@@ -6,9 +6,21 @@ import buildVoucherTypedData from "../utils/eip712.js";
 /**
 Props:
   - signer: ethers Signer (from WalletContext)
-  - contractAddress: address of VoucherERC1155 (verifyingContract)
+  - contractAddress: address of VoucherERC1155 (from addresses.js to use in domain for signature)
+
+This component:
+  1) collects voucher inputs
+  2) uploads metadata to IPFS (nft.storage) and get metadataCID
+  3) computes metadataHash
+  4) constructs VoucherData matching Solidity struct and define domain
+  5) use buildVoucherTypedData to build fully structured typed data
+  5) asks merchant wallet to sign EIP-712 typed data from domain, tyoes and voucherData
+  6) logs (voucher, signature) — ready to send to backend
+
 */
 export default function MerchantVoucherForm({ signer, contractAddress }) {
+
+    //the fields form has
     const [form, setForm] = useState({
         title: "",
         description: "",
@@ -20,46 +32,61 @@ export default function MerchantVoucherForm({ signer, contractAddress }) {
     });
     const [loading, setLoading] = useState(false);
 
+    // give a upcoming date from now to use in expiry
+    const getUpcomingDate = (days) => {
+        const date = new Date();
+        date.setDate(date.getDate() + days);
+        return date.toISOString().slice(0, 16);
+    };
+
     const handleChange = (e) => {
         const { name, value, files } = e.target;
         setForm((prev) => ({ ...prev, [name]: files ? files[0] : value }));
     };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!signer) {
             alert("Connect your wallet first.");
             return;
+            
+        } else if (new Date(form.expiry).getTime() <= Date.now()) {
+            alert("Expiry must be in the future.");
+            return;
         }
         setLoading(true);
         try {
             const merchantAddress = await signer.getAddress();
+            // metadata from the form filled by merchant
             const metadata = {
                 name: form.title,
                 description: form.description,
+                expiry: form.expiry,
                 properties: {
                     maxMint: Number(form.maxMint),
                     price: form.price,
                     nonce: form.nonce,
+                    createdBy: merchantAddress,
+                    createdAt: new Date().toISOString(),
                 },
-                createdBy: merchantAddress,
-                createdAt: new Date().toISOString(),
             };
+
             const metadataCID = await uploadMetadata(metadata, form.image);
 
             const metadataString = JSON.stringify(metadata);
             const metadataHash = ethers.keccak256(ethers.toUtf8Bytes(metadataString));
 
+            // Compute a unique voucherId (keccak256(merchant:nonce) -> uint256)
             const uidHex = ethers.keccak256(ethers.toUtf8Bytes(`${merchantAddress}:${form.nonce}`));
             const voucherId = BigInt(uidHex);
 
+            const expiry = BigInt(Math.floor(new Date(form.expiry).getTime() / 1000))
             const price = BigInt(ethers.parseUnits(String(form.price || "0"), 18));
 
-            const voucherForSigning = {
+            const voucherData = {
                 voucherId: voucherId,
                 merchantAddress: merchantAddress,
                 maxMint: BigInt(Number(form.maxMint)),
-                expiry: BigInt(Math.floor(new Date(form.expiry).getTime() / 1000)),
+                expiry: expiry,
                 metadataHash: metadataHash,
                 metadataCID: metadataCID,
                 price: price,
@@ -75,11 +102,10 @@ export default function MerchantVoucherForm({ signer, contractAddress }) {
                 chainId: CHAIN_ID,
                 verifyingContract: contractAddress,
             };
-
-            const typed = buildVoucherTypedData(domain, voucherForSigning);
+            const typed = buildVoucherTypedData(domain, voucherData);
             const signature = await signer._signTypedData(typed.domain, typed.types, typed.message);
 
-            console.log("Voucher:", voucherForSigning);
+            console.log("Voucher:", voucherData);
             console.log("Signature:", signature);
 
         } catch (err) {
@@ -133,6 +159,7 @@ export default function MerchantVoucherForm({ signer, contractAddress }) {
                 value={form.expiry}
                 onChange={handleChange}
                 required
+                min={getUpcomingDate(3)}
                 className="w-full border px-3 py-2 rounded"
             />
 
@@ -172,5 +199,4 @@ export default function MerchantVoucherForm({ signer, contractAddress }) {
             </button>
         </form>
     )
-
 };
