@@ -1,5 +1,5 @@
 import React from "react";
-import { useWallet } from "../context/WalletContext.jsx";
+import { useWallet } from "../Context/WalletContext.jsx";
 
 export default function ConnectWallet() {
   const { account, connectWallet } = useWallet();

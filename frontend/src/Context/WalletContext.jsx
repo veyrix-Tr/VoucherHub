@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState } from "react";
 import { ethers } from "ethers";
+import { useNavigate } from "react-router-dom";
 
 // context define to use anywhere
 const WalletContext = createContext();
@@ -10,6 +11,7 @@ export const WalletProvider = ({ children }) => {
     const [account, setAccount] = useState(null);
     const [signer, setSigner] = useState(null);
     const [provider, setProvider] = useState(null);
+    const navigate = useNavigate();  
 
     const connectWallet = async () => {
         if (typeof window === "undefined" || !window.ethereum) {
@@ -30,6 +32,7 @@ export const WalletProvider = ({ children }) => {
                 setProvider(provider);
                 setSigner(signer);
                 setAccount(address);
+                navigate("/merchant")
             } catch (error) {
                 console.error(err.message);
             }
