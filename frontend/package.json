@@ -12,10 +12,11 @@
   "dependencies": {
     "@metamask/detect-provider": "^2.0.0",
     "dotenv": "^17.2.1",
-    "ethers": "^6.15.0",
+    "ethers": "^5.8.0",
     "ipfs-http-client": "^60.0.1",
     "nft.storage": "^7.2.0",
     "node": "20.19",
+    "pinata": "^2.5.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.30.1",

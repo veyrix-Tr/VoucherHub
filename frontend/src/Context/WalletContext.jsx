@@ -22,10 +22,10 @@ export const WalletProvider = ({ children }) => {
                 await window.ethereum.request({ method: "eth_requestAccounts" });
 
                 // read-only connection which allows querying the blockchain state or event logs, needed when interact with contracts
-                const provider = new ethers.BrowserProvider(window.ethereum);
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
 
                 // get signer from the blockchain which would help to sign vouchers
-                const signer = await provider.getSigner();
+                const signer = provider.getSigner();
 
                 // show connected wallet
                 const address = await signer.getAddress();
@@ -34,7 +34,7 @@ export const WalletProvider = ({ children }) => {
                 setAccount(address);
                 navigate("/merchant")
             } catch (error) {
-                console.error(err.message);
+                console.error(error.message);
             }
         }
     }

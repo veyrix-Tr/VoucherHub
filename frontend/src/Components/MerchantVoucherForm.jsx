@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { ethers } from "ethers";
+import { ethers, utils, BigNumber } from "ethers";
 import { uploadMetadata } from "../utils/ipfs.js";
-import buildVoucherTypedData from "../utils/eip712.js";
+import {buildVoucherTypedData} from "../utils/eip712.js";
 
 /**
 Props:
@@ -55,7 +55,8 @@ export default function MerchantVoucherForm({ signer, contractAddress }) {
         }
         setLoading(true);
         try {
-            const merchantAddress = await signer.getAddress();
+            const merchant = await signer.getAddress();
+            // const merchant = ethers.getAddress(merchantAddress);
             // metadata from the form filled by merchant
             const metadata = {
                 name: form.title,
@@ -65,7 +66,7 @@ export default function MerchantVoucherForm({ signer, contractAddress }) {
                     maxMint: Number(form.maxMint),
                     price: form.price,
                     nonce: form.nonce,
-                    createdBy: merchantAddress,
+                    createdBy: merchant,
                     createdAt: new Date().toISOString(),
                 },
             };
@@ -73,24 +74,24 @@ export default function MerchantVoucherForm({ signer, contractAddress }) {
             const metadataCID = await uploadMetadata(metadata, form.image);
 
             const metadataString = JSON.stringify(metadata);
-            const metadataHash = ethers.keccak256(ethers.toUtf8Bytes(metadataString));
+            const metadataHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(metadataString));
 
-            // Compute a unique voucherId (keccak256(merchant:nonce) -> uint256)
-            const uidHex = ethers.keccak256(ethers.toUtf8Bytes(`${merchantAddress}:${form.nonce}`));
-            const voucherId = BigInt(uidHex);
+            // Compute a unique voucherId (utils.keccak256(merchant:nonce) -> uint256)
+            const uidHex = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(`${merchant}:${form.nonce}`));
+            const voucherId = BigNumber.from(uidHex);
 
-            const expiry = BigInt(Math.floor(new Date(form.expiry).getTime() / 1000))
-            const price = BigInt(ethers.parseUnits(String(form.price || "0"), 18));
+            const expiry = BigNumber.from(Math.floor(new Date(form.expiry).getTime() / 1000))
+            const price = BigNumber.from(ethers.utils.parseUnits(String(form.price || "0"), 18));
 
             const voucherData = {
                 voucherId: voucherId,
-                merchantAddress: merchantAddress,
-                maxMint: BigInt(Number(form.maxMint)),
+                merchant: merchant,
+                maxMint: BigNumber.from(Number(form.maxMint)),
                 expiry: expiry,
                 metadataHash: metadataHash,
                 metadataCID: metadataCID,
                 price: price,
-                nonce: BigInt(Number(form.nonce || 1))
+                nonce: BigNumber.from(Number(form.nonce || 1))
             };
 
             const network = await signer.provider.getNetwork();
@@ -104,7 +105,7 @@ export default function MerchantVoucherForm({ signer, contractAddress }) {
             };
             const typed = buildVoucherTypedData(domain, voucherData);
             const signature = await signer._signTypedData(typed.domain, typed.types, typed.message);
-
+            
             console.log("Voucher:", voucherData);
             console.log("Signature:", signature);
 

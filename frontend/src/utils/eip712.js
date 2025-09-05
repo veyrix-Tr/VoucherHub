@@ -1,4 +1,4 @@
-function buildVoucherTypedData(domain, voucherData) {
+export function buildVoucherTypedData(domain, voucherData) {
   return {
     domain,
     types: {
@@ -18,4 +18,3 @@ function buildVoucherTypedData(domain, voucherData) {
   };
 }
 
-export default buildVoucherTypedData();
