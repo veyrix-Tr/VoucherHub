@@ -1,13 +1,18 @@
 import express from "express";
 import { approveVoucher, createVoucher, getVoucherById, getVouchers, redeemVoucher, rejectVoucher } from "../controllers/voucherController.js";
+import { validateVoucher, validateApprove, validateReject } from "../middleware/validateVoucher.js";
+import { protect, adminOnly } from "../middleware/authMiddleware.js";
+
 
 const router = express.Router();
 
-router.post("/", createVoucher);
-router.get("/", getVouchers);
-router.get("/:id", getVoucherById);
-router.put("/:id/redeem", redeemVoucher);
-router.put("/:id/approve", approveVoucher);
-router.put("/:id/reject", rejectVoucher);
+router.post("/", protect, validateVoucher, createVoucher);
+router.get("/", protect, getVouchers);
+router.get("/:id", protect, getVoucherById);
+
+router.put("/:id/approve", protect, adminOnly, approveVoucher, validateApprove);
+router.put("/:id/reject", protect, adminOnly, rejectVoucher, validateReject);
+
+router.put("/:id/redeem", protect, redeemVoucher);
 
 export default router;
