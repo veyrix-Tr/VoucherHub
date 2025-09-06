@@ -32,7 +32,7 @@ export const WalletProvider = ({ children }) => {
                 setProvider(provider);
                 setSigner(signer);
                 setAccount(address);
-                navigate("/merchant")
+                navigate("/admin")
             } catch (error) {
                 console.error(error.message);
             }
