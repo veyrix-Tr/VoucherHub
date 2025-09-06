@@ -13,7 +13,7 @@ export const createVoucher = async (req, res) => {
     const domain = {
       name: "VoucherERC1155",
       version: "1",
-      chainId: chainId || 1,
+      chainId: chainId || 11155111,
       verifyingContract: process.env.VOUCHER_CONTRACT_ADDRESS,
     };
     const types = {

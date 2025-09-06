@@ -2,11 +2,18 @@ import jwt from "jsonwebtoken";
 
 // Verify JWT Token
 export const protect = (req, res, next) => {
-  let token;
 
+  if (process.env.DISABLE_AUTH === "true") {
+    // Dev bypass
+    req.user = { id: "dev", role: "admin" }; // optionally set admin for testing
+    return next();
+  }
+  
   // Checks if Authorization header exists and is in correct format
   // then remove the Bearer part by splitting and verify and get decoded payload (the object you put when signing) and Attaches user info to req.user 
 
+  let token;
+  
   if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
     try {
       token = req.headers.authorization.split(" ")[1];

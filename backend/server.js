@@ -10,19 +10,18 @@ import voucherRoutes from "./src/routes/voucherRoutes.js";
 dotenv.config();
 
 const app = express();
-
 app.use(express.json());
-app.use(cors());
+
 app.use(helmet());
+app.use(cors());
 app.use(bodyParser.json());
 
 app.use("/api/vouchers", voucherRoutes);
 
 async function testVoucher() {
-  const exists = await Voucher.findOne({ id: "demo-uuid" });
+  const exists = await Voucher.findOne({ voucherId: "1" });
   if (!exists) {
     const demo = new Voucher({
-      id: "demo-uuid",
       voucherId: "1",
       merchant: "0x1234abcd...",
       maxMint: "100",
