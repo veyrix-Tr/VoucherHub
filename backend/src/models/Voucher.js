@@ -10,13 +10,16 @@ const voucherSchema = new mongoose.Schema({
   price: { type: String, required: true },
   nonce: { type: String, required: true },
   signature: { type: String, required: true },
-  status: { 
-    type: String, 
-    enum: ["pending", "approved", "rejected", "redeemed"], 
-    default: "pending" 
+  status: {
+    type: String,
+    enum: ["pending", "approved", "rejected", "redeemed"],
+    default: "pending"
   },
   approvedTxHash: { type: String },
   notes: { type: String },
+  redeemedBy: { type: String, lowercase: true },
+  redeemedTxHash: { type: String },
+  redeemedAt: { type: Date },
 
 }, { timestamps: true });
 

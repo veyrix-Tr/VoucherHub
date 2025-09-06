@@ -33,9 +33,9 @@ async function testVoucher() {
       signature: "0xsignature",
     });
     await demo.save();
-    console.log("✅ Demo voucher saved!");
+    console.log("Demo voucher saved!");
   } else {
-    console.log("ℹ️ Demo voucher already exists");
+    console.log("Demo voucher already exists");
   }
 }
 
@@ -44,7 +44,7 @@ const PORT = process.env.PORT || 4000;
 const startServer = async () => {
   connectDB().then(() => {
     app.listen(PORT, () => {
-      console.log(`✅ Server running on http://localhost:${PORT}`);
+      console.log(`Server running on http://localhost:${PORT}`);
       testVoucher();
     });
   })
