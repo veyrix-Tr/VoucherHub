@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { ethers, utils, BigNumber } from "ethers";
 import { uploadMetadata } from "../utils/ipfs.js";
-import {buildVoucherTypedData} from "../utils/eip712.js";
+import { buildVoucherTypedData } from "../utils/eip712.js";
+import axios from "axios";
+
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 /**
 Props:
@@ -48,7 +51,7 @@ export default function MerchantVoucherForm({ signer, contractAddress }) {
         if (!signer) {
             alert("Connect your wallet first.");
             return;
-            
+
         } else if (new Date(form.expiry).getTime() <= Date.now()) {
             alert("Expiry must be in the future.");
             return;
@@ -84,14 +87,14 @@ export default function MerchantVoucherForm({ signer, contractAddress }) {
             const price = BigNumber.from(ethers.utils.parseUnits(String(form.price || "0"), 18));
 
             const voucherData = {
-                voucherId: voucherId,
-                merchant: merchant,
-                maxMint: BigNumber.from(Number(form.maxMint)),
-                expiry: expiry,
-                metadataHash: metadataHash,
-                metadataCID: metadataCID,
-                price: price,
-                nonce: BigNumber.from(Number(form.nonce || 1))
+                voucherId: voucherId.toString(),
+                merchant,
+                maxMint: BigNumber.from(form.maxMint).toString(),
+                expiry: expiry.toString(),
+                metadataHash,
+                metadataCID,
+                price: price.toString(),
+                nonce: BigNumber.from(form.nonce || 1).toString()
             };
 
             const network = await signer.provider.getNetwork();
@@ -105,9 +108,14 @@ export default function MerchantVoucherForm({ signer, contractAddress }) {
             };
             const typed = buildVoucherTypedData(domain, voucherData);
             const signature = await signer._signTypedData(typed.domain, typed.types, typed.message);
-            
-            console.log("Voucher:", voucherData);
-            console.log("Signature:", signature);
+
+            const resps = await axios.post(`${backendUrl}/api/vouchers`, {
+                voucher: voucherData,
+                signature,
+                chainId: CHAIN_ID,
+            });
+            console.log("Backend response:", resps.data);
+
 
         } catch (err) {
             console.error("Error creating voucher:", err);

@@ -4,9 +4,9 @@ import merchantRegistryAbi from '../abi/MerchantRegistry.json' with { type: "jso
 
 export const createVoucher = async (req, res) => {
   try {
-    const { voucherData, signature, chainId } = req.body;
+    const { voucher, signature, chainId } = req.body;
 
-    if (!voucherData || !signature) {
+    if (!voucher || !signature) {
       return res.status(400).json({ error: "Missing voucher or signature" });
     }
 
@@ -25,40 +25,44 @@ export const createVoucher = async (req, res) => {
         { name: "metadataHash", type: "bytes32" },
         { name: "metadataCID", type: "string" },
         { name: "price", type: "uint256" },
-        { name: "nonce", type: "uint256" },
+        { name: "nonce", type: "uint256" }
       ],
     };
+    const recovered = ethers.utils.verifyTypedData(domain, types, voucher, signature);
 
-    const recovered = ethers.utils.verifyTypedData(domain, types, voucherData, signature);
-
-    if (recovered.toLowerCase() !== voucherData.merchant.toLowerCase()) {
+    if (recovered.toLowerCase() !== voucher.merchant.toLowerCase()) {
       return res.status(400).json({ error: "Invalid signature" });
     }
 
     const provider = new ethers.providers.JsonRpcProvider(process.env.RPC_URL);
+    if (!provider) {
+      console.log("error in fetching the provider, may be problem with RPC_URL");
+      return
+    }
     const registry = new ethers.Contract(
       process.env.MERCHANT_REGISTRY_ADDRESS,
       merchantRegistryAbi,
       provider
     );
 
-    const isMerchant = await registry.isMerchant(voucherData.merchant);
+    const isMerchant = await registry.isMerchant(voucher.merchant);
     if (!isMerchant) {
       return res.status(403).json({ error: "Not a registered merchant" });
     }
 
     const exists = await Voucher.findOne({
-      $or: [{ voucherId: voucherData.voucherId }, { nonce: voucherData.nonce }]
+      $or: [{ voucherId: voucher.voucherId }, { nonce: voucher.nonce }]
     });
     if (exists) {
       return res.status(409).json({ error: "Voucher already exists" });
     }
 
     const newVoucher = new Voucher({
-      ...voucherData,
+      ...voucher,
       signature,
       status: "pending"
     });
+
     await newVoucher.save();
 
     res.json({ status: "pending", id: newVoucher._id });

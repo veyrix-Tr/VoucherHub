@@ -6,7 +6,7 @@ import { protect, adminOnly } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/", protect, validateVoucher, createVoucher);
+router.post("/", protect, createVoucher);
 router.get("/", protect, getVouchers);
 router.get("/:id", protect, getVoucherById);
 
