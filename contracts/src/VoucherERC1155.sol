@@ -6,11 +6,13 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "@openzeppelin/contracts/utils/cryptography/EIP712.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "./MerchantRegistry.sol";
+
 
 contract VoucherERC1155 is ERC1155, EIP712, Ownable, ReentrancyGuard {
     using ECDSA for bytes32;
 
-    address public merchantRegistry;
+    MerchantRegistry public immutable merchantRegistry;
     
     struct VoucherData {
         uint256 voucherId;
@@ -33,7 +35,7 @@ contract VoucherERC1155 is ERC1155, EIP712, Ownable, ReentrancyGuard {
         EIP712("VoucherERC1155", "1")
         Ownable(msg.sender)
     {
-        merchantRegistry = _merchantRegistry;
+        merchantRegistry = MerchantRegistry(_merchantRegistry);
     }
 
     // it defines type of the voucher in hash format to avoid any change in VoucherData's type
@@ -55,12 +57,14 @@ contract VoucherERC1155 is ERC1155, EIP712, Ownable, ReentrancyGuard {
             _voucherData.price,
             _voucherData.nonce
         ));
-    } 
+    }
+
+    // can use directly but wanted to make it public
     function hashTypedDataV4Public(bytes32 structHash) public view returns (bytes32) {
         return _hashTypedDataV4(structHash);
     }
 
-    // for verifying the voucher before minting
+    // for verifying the voucher before minting it returns the address of signer
     function _verifyVoucher(VoucherData memory _voucherData, bytes memory signature) internal view returns (address) {
         bytes32 structHash = _hashVoucher(_voucherData);
         bytes32 digest = _hashTypedDataV4(structHash);
@@ -76,15 +80,14 @@ contract VoucherERC1155 is ERC1155, EIP712, Ownable, ReentrancyGuard {
         address signer = _verifyVoucher(v, signature);
         require(signer == v.merchant, "invalid signer");
 
-        (bool ok, bytes memory data) = merchantRegistry.call(abi.encodeWithSignature("isMerchant(address)", signer));
-        require(ok && data.length > 0 && abi.decode(data, (bool)), "merchant not approved");
+        require(merchantRegistry.isMerchant(signer), "merchant not approved");
 
         if (bytes(voucherCID[v.voucherId]).length == 0) {
             voucherCID[v.voucherId] = v.metadataCID;
             emit URI(v.metadataCID, v.voucherId);
         }
-        minted[v.voucherId] += amount;
         _mint(to, v.voucherId, amount, "");
+        minted[v.voucherId] += amount;
         emit VoucherMinted(v.voucherId, to, amount, v.metadataCID);
     }
 
@@ -95,6 +98,7 @@ contract VoucherERC1155 is ERC1155, EIP712, Ownable, ReentrancyGuard {
         emit Redeemed(voucherId, msg.sender, amount, block.timestamp);
     }
 
+    // Returns the metadata URI for a given voucher ID (overrides ERC1155 default URI) if metaData URI doesn't exist it just fallback to the parent (ERC1155) implementation with super.uri(id)
     function uri(uint256 id) public view override returns (string memory) {
         if (bytes(voucherCID[id]).length > 0) {
             return voucherCID[id];

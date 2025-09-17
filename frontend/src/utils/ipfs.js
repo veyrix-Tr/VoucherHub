@@ -17,7 +17,7 @@ const pinata = new PinataSDK({
 
 export async function uploadImage(file) {
   try {
-    const upload = await pinata.upload.file(file);
+    const upload = await pinata.upload.public.file(file);
     return `ipfs://${upload.cid}`;
   } catch (err) {
     console.error("uploadImage error:", err);
@@ -27,8 +27,7 @@ export async function uploadImage(file) {
 
 export async function uploadMetadata(metadata, imageFile) {
   try {
-    const imageUpload = await pinata.upload.public.file(imageFile);
-    const imageUrl = `ipfs://${imageUpload.cid}`;
+    const imageUrl = await uploadImage(imageFile);
     
     const completeMetadata = {
       name: metadata.name,

@@ -17,7 +17,7 @@ This component:
   3) computes metadataHash
   4) constructs VoucherData matching Solidity struct and define domain
   5) use buildVoucherTypedData to build fully structured typed data
-  5) asks merchant wallet to sign EIP-712 typed data from domain, tyoes and voucherData
+  5) asks merchant wallet to sign EIP-712 typed data from domain, types and voucherData
   6) logs (voucher, signature) — ready to send to backend
 
 */
@@ -107,6 +107,8 @@ export default function MerchantVoucherForm({ signer, contractAddress }) {
                 verifyingContract: contractAddress,
             };
             const typed = buildVoucherTypedData(domain, voucherData);
+            
+            // A 65-byte sequence, with r and s occupying the first 64 bytes (32 each) and v the final byte
             const signature = await signer._signTypedData(typed.domain, typed.types, typed.message);
 
             const resps = await axios.post(`${backendUrl}/api/vouchers`, {

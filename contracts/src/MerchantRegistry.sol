@@ -18,9 +18,11 @@ contract MerchantRegistry is Ownable {
     constructor(address initialOwner) Ownable(initialOwner) {}
 
     function registerMerchant(address _merchant, string memory _name) external onlyOwner {
-        require(_merchant != address(0), "Invalid address");
-        require(bytes(_name).length > 0, "Name required");
-        require(merchants[_merchant].merchantAddress == address(0), "Already registered");
+        require(_merchant != address(0), "Invalid address"); // check valid address
+        require(bytes(_name).length > 0, "Name required"); // check valid name
+        require(merchants[_merchant].merchantAddress == address(0), "Already registered"); // if merchant is not already registered
+
+        // register merchant by storing and emit event after for frontend
         merchants[_merchant] = Merchant({
             merchantAddress: _merchant,
             name: _name,
@@ -29,12 +31,13 @@ contract MerchantRegistry is Ownable {
         emit MerchantRegistered(_merchant, _name);
     }
 
+    // if registered then update the merchant status
     function updateMerchantStatus(address _merchant, bool _status) external onlyOwner {
         require(merchants[_merchant].merchantAddress != address(0), "Not registered");
         merchants[_merchant].isActive = _status;
         emit MerchantStatusUpdated(_merchant, _status);
     }
-
+    // checks if merchant is registered and is Active...
     function isMerchant(address _merchant) public view returns(bool) {
         return merchants[_merchant].merchantAddress != address(0) && merchants[_merchant].isActive;
     }

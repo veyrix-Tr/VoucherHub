@@ -21,10 +21,39 @@ contract VoucherERC1155Test is Test {
         vm.stopPrank();
     }
 
-    function _dummyVoucher(uint256 id) internal view returns (VoucherERC1155.VoucherData memory) {
-        return VoucherERC1155.VoucherData({
-            voucherId: id,
-            merchant: merchant,
+    function _dummyVoucher(
+        uint256 id
+    ) internal view returns (VoucherERC1155.VoucherData memory) {
+        return
+            VoucherERC1155.VoucherData({
+                voucherId: id,
+                merchant: merchant,
+                maxMint: 10,
+                expiry: block.timestamp + 1 days,
+                metadataHash: keccak256("ipfsHash"),
+                metadataCID: "Qm123",
+                price: 0,
+                nonce: 1
+            });
+    }
+
+    function signWithVoucherData(
+        VoucherERC1155.VoucherData memory _voucherData,
+        uint256 _privateKey
+    ) public view returns (bytes memory) {
+        bytes32 digest = voucher.hashTypedDataV4Public(
+            voucher._hashVoucher(_voucherData)
+        );
+        (uint8 v_, bytes32 r, bytes32 s) = vm.sign(_privateKey, digest);
+        return abi.encodePacked(r, s, v_);
+    }
+
+    function testMintFailsIfMerchantNotRegistered() public {
+        // Use a voucher signed by a non-registered fake merchant
+        address fakeMerchant = vm.addr(4);
+        VoucherERC1155.VoucherData memory v = VoucherERC1155.VoucherData({
+            voucherId: 2,
+            merchant: fakeMerchant,
             maxMint: 10,
             expiry: block.timestamp + 1 days,
             metadataHash: keccak256("ipfsHash"),
@@ -32,12 +61,15 @@ contract VoucherERC1155Test is Test {
             price: 0,
             nonce: 1
         });
-    }
-    
-    function signWithVoucherData(VoucherERC1155.VoucherData memory _voucherData, uint256 _privateKey) public view returns (bytes memory) {
-        bytes32 digest = voucher.hashTypedDataV4Public(voucher._hashVoucher(_voucherData));
-        (uint8 v_, bytes32 r, bytes32 s) = vm.sign(_privateKey, digest);
-        return abi.encodePacked(r, s, v_);
+        bytes memory sig = signWithVoucherData(v, 4);
+
+        vm.prank(admin);
+        voucher.setVoucherApproval(2, true);
+
+        vm.startPrank(user);
+        vm.expectRevert("merchant not approved");
+        voucher.mintFromVoucher(v, sig, 1, user);
+        vm.stopPrank();
     }
 
     function testMintFailsWithoutApproval() public {
