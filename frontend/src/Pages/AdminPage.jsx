@@ -31,12 +31,47 @@ export default function AdminPage() {
     setLoadingList(true);
     try {
       const resp = await axios.get(`${backendUrl}/api/vouchers?status=pending`);
-      setVouchers(resp.data || []);
+      const vouchersData = resp.data || [];
+
+      const enriched = await Promise.all(
+        vouchersData.map(async (v) => {
+          try {
+            const url = await createGatewayUrl(v.metadataCID);
+            const metaResp = await fetch(url);
+            const metadata = await metaResp.json();
+            let imageUrl = null;
+            if (metadata.image) {
+              imageUrl = await createGatewayUrl(metadata.image);
+            }
+            return { ...v, metadata, imageUrl };
+
+          } catch (err) {
+            console.error("Failed to fetch metadata for", v.voucherId, err);
+            return { ...v, metadata: null, imageUrl: null };
+          }
+        })
+      );
+      setVouchers(enriched);
+
     } catch (err) {
       console.error("Failed to load vouchers", err);
       setVouchers([]);
     } finally {
       setLoadingList(false);
+    }
+  }
+
+  async function fetchMetadata(v) {
+    try {
+      const url = await createGatewayUrl(v.metadataCID);
+      const resp = await fetch(url);
+      const metadata = await resp.json();
+      const image = metadata.image
+        ? await createGatewayUrl(metadata.image)
+        : null;
+      return ({ metadata, image });
+    } catch (err) {
+      console.error("Failed to fetch metadata for", v.voucherId, err);
     }
   }
 
@@ -99,7 +134,7 @@ export default function AdminPage() {
     }
   }
 
-return (
+  return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <h2 className="text-3xl font-bold mb-6 text-gray-800">Admin — Pending Vouchers</h2>
 
@@ -119,16 +154,15 @@ return (
         <div className="grid gap-6">
           {vouchers.map(v => {
             const id = v._id || v.id;
-            const image = createGatewayUrl(v.metadataCID);
             return (
               <div
                 key={id}
                 className="flex flex-col md:flex-row items-center md:items-start p-4 bg-white rounded-lg shadow hover:shadow-lg transition"
               >
                 <div className="w-full md:w-40 flex-shrink-0 mb-4 md:mb-0">
-                  {image ? (
+                  {v.imageUrl ? (
                     <img
-                      src={image}
+                      src={v.imageUrl}
                       alt="voucher"
                       className="w-full h-32 object-cover rounded-md"
                     />

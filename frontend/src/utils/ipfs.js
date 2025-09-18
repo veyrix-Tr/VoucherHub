@@ -47,12 +47,11 @@ export async function uploadMetadata(metadata, imageFile) {
 
 // For displaying images in your web app by getting gatewayUrl from cid
 export async function createGatewayUrl(ipfsUri) {
-  console.log(ipfsUri);
   if (!ipfsUri) return null;
   if (ipfsUri.startsWith("ipfs://")) {
     const cid = ipfsUri.replace("ipfs://", "");
-    const gateway = import.meta.env.VITE_PINATA_GATEWAY || "https://gateway.pinata.cloud/ipfs";
-    return `${gateway}/${cid}`;
+    const gateway = import.meta.env.VITE_PINATA_GATEWAY || "https://gateway.pinata.cloud/";
+    return `${gateway}/ipfs/${cid}`;
   }
   console.log("use a valid ipfsUri", ipfsUri);
   return ipfsUri;

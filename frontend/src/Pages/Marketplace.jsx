@@ -22,16 +22,22 @@ export default function Marketplace() {
       const enriched = await Promise.all(
         vouchersData.map(async (v) => {
           try {
-            const url = await createGatewayUrl(v.voucher.metadataCID);
+            const url = await createGatewayUrl(v.metadataCID);
             const resp = await fetch(url);
             const metadata = await resp.json();
-            return { ...v, metadata };
+            let imageUrl = null;
+            if (metadata.image) {
+              imageUrl = await createGatewayUrl(metadata.image);
+            }
+            return { ...v, metadata, imageUrl };
+
           } catch (err) {
             console.error("Failed to fetch metadata for", v.voucherId, err);
             return { ...v, metadata: null };
           }
         })
       );
+
       setVouchers(enriched);
 
     } catch (err) {
@@ -57,7 +63,6 @@ export default function Marketplace() {
       ) : (
         <div className="grid grid-cols-3 gap-4 mt-4">
           {vouchers.map(v => {
-
             if (!v.metadata) {
               return (
                 <div key={v._id} className="border rounded-lg p-3 shadow text-red-500">
@@ -65,16 +70,15 @@ export default function Marketplace() {
                 </div>
               );
             }
-            const image = v.metadata.image ? createGatewayUrl(v.metadata.image) : null;
-            const expiry = new Date(Number(v.voucher.expiry) * 1000).toLocaleString();
+            const expiry = new Date(v.metadata.expiry).toLocaleString();
 
             return (
               <div key={v._id} className="border rounded-lg p-3 shadow">
-                {image ? (
+                {v.imageUrl ? (
                   <img
-                    src={image}
+                    src={v.imageUrl}
                     alt={v.metadata.name || "Voucher"}
-                    className="w-full h-40 object-cover rounded"
+                    className="w-full h-48 object-cover rounded-md shadow-sm"
                   />
                 ) : (
                   <div className="w-full h-40 bg-gray-200 flex items-center justify-center">
@@ -83,7 +87,7 @@ export default function Marketplace() {
                 )}
                 <h3 className="font-bold mt-2">{v.metadata.name || "Unnamed Voucher"}</h3>
                 <p className="text-sm text-gray-600">{v.metadata.description}</p>
-                <p>Price: {v.voucher.price} wei</p>
+                <p>Price: {v.price} wei</p>
                 <p>Expiry: {expiry}</p>
                 <button className="bg-blue-600 text-white mt-2 px-3 py-1 rounded">
                   Mint
