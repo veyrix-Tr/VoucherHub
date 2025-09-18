@@ -5,14 +5,14 @@ import { useWallet } from "../Context/WalletContext.jsx";
 import VoucherABI from "../../../backend/src/abi/VoucherERC1155.json";
 import addresses from "../contracts/addresses.js";
 import { createGatewayUrl } from "../utils/ipfs.js";
+import { fetchVouchersByStatus } from "../utils/fetchVoutchers.js";
 
 export default function AdminPage() {
-
   const { provider, signer, account } = useWallet();
 
   // usestate for {vouchers}, {is the list of vouchers, loading}
   const [vouchers, setVouchers] = useState([]);
-  const [loadingList, setLoadingList] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // it stores the loading stautus of a voucher, if any voucher is approving or rejecting, it prevent reclick and 
   const [statusLoading, setStatusLoading] = useState({});
@@ -23,43 +23,10 @@ export default function AdminPage() {
 
   // every time account or chainId changes grab pending vouchers
   useEffect(() => {
-    loadPending();
+    fetchVouchersByStatus("pending", setVouchers, setLoading);
   }, [account, CHAIN_ID]);
 
   // get request to backend and filtered by status voucher returned by backend and set to vouchers
-  async function loadPending() {
-    setLoadingList(true);
-    try {
-      const resp = await axios.get(`${backendUrl}/api/vouchers?status=pending`);
-      const vouchersData = resp.data || [];
-
-      const enriched = await Promise.all(
-        vouchersData.map(async (v) => {
-          try {
-            const url = await createGatewayUrl(v.metadataCID);
-            const metaResp = await fetch(url);
-            const metadata = await metaResp.json();
-            let imageUrl = null;
-            if (metadata.image) {
-              imageUrl = await createGatewayUrl(metadata.image);
-            }
-            return { ...v, metadata, imageUrl };
-
-          } catch (err) {
-            console.error("Failed to fetch metadata for", v.voucherId, err);
-            return { ...v, metadata: null, imageUrl: null };
-          }
-        })
-      );
-      setVouchers(enriched);
-
-    } catch (err) {
-      console.error("Failed to load vouchers", err);
-      setVouchers([]);
-    } finally {
-      setLoadingList(false);
-    }
-  }
 
   async function fetchMetadata(v) {
     try {
@@ -98,7 +65,7 @@ export default function AdminPage() {
       await tx.wait();
 
       await axios.put(`${backendUrl}/api/vouchers/${id}/approve`, { txHash: tx.hash });
-      await loadPending();
+      await fetchVouchersByStatus("pending", setVouchers, setLoading);
       alert("Voucher approved and backend updated");
 
     } catch (err) {
@@ -121,7 +88,7 @@ export default function AdminPage() {
     try {
       setStatusLoading(prev => ({ ...prev, [id]: true }));
       await axios.put(`${backendUrl}/api/vouchers/${id}/reject`, { notes });
-      await loadPending();
+      await fetchVouchersByStatus("pending", setVouchers, setLoading);
       alert("Voucher rejected");
     } catch (err) {
       console.error("Reject error", err);
@@ -140,15 +107,15 @@ export default function AdminPage() {
 
       <div className="mb-6">
         <button
-          onClick={loadPending}
-          disabled={loadingList}
+          onClick={()=>fetchVouchersByStatus("pending", setVouchers, setLoading)}
+          disabled={loading}
           className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400 transition"
         >
-          {loadingList ? "Loading..." : "Refresh"}
+          {loading ? "Loading..." : "Refresh"}
         </button>
       </div>
 
-      {vouchers.length === 0 && !loadingList ? (
+      {vouchers.length === 0 && !loading ? (
         <div className="text-gray-500 text-center py-10">No pending vouchers</div>
       ) : (
         <div className="grid gap-6">

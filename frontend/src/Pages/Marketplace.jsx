@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useWallet } from "../Context/WalletContext.jsx";
 import axios from "axios";
 import { createGatewayUrl } from "../utils/ipfs.js";
+import { fetchVouchersByStatus } from "../utils/fetchVoutchers.js";
 
 export default function Marketplace() {
 
@@ -12,44 +13,8 @@ export default function Marketplace() {
   const { account } = useWallet();
   const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
-  const fetchApprovedVouchers = async () => {
-    setLoading(true);
-    try {
-      const res = await axios.get(`${backendUrl}/api/vouchers?status=approved`);
-      const vouchersData = res.data || [];
-
-      // Collects all these Promises (one for each voucher) and Waits for all to finish, If any Promise fails, the whole Promise.all fails
-      const enriched = await Promise.all(
-        vouchersData.map(async (v) => {
-          try {
-            const url = await createGatewayUrl(v.metadataCID);
-            const resp = await fetch(url);
-            const metadata = await resp.json();
-            let imageUrl = null;
-            if (metadata.image) {
-              imageUrl = await createGatewayUrl(metadata.image);
-            }
-            return { ...v, metadata, imageUrl };
-
-          } catch (err) {
-            console.error("Failed to fetch metadata for", v.voucherId, err);
-            return { ...v, metadata: null };
-          }
-        })
-      );
-
-      setVouchers(enriched);
-
-    } catch (err) {
-      console.error("Failed to load vouchers", err);
-      setVouchers([]);
-
-    } finally {
-      setLoading(false);
-    }
-  }
   useEffect(() => {
-    fetchApprovedVouchers();
+    fetchVouchersByStatus("approved", setVouchers, setLoading);
   }, [account])
 
   return (
