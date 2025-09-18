@@ -4,6 +4,7 @@ import { ethers } from "ethers";
 import { useWallet } from "../Context/WalletContext.jsx";
 import VoucherABI from "../../../backend/src/abi/VoucherERC1155.json";
 import addresses from "../contracts/addresses.js";
+import { createGatewayUrl } from "../utils/ipfs.js";
 
 export default function AdminPage() {
 
@@ -37,18 +38,6 @@ export default function AdminPage() {
     } finally {
       setLoadingList(false);
     }
-  }
-
-  // from metadataCID remove "ipfs://" and add gateway and return the Image url
-  function getImageUrl(metadataCID) {
-    if (!metadataCID) return null;
-    if (metadataCID.startsWith("ipfs://")) {
-      const cid = metadataCID.replace("ipfs://", "");
-      const gateway = import.meta.env.VITE_PINATA_GATEWAY || "https://gateway.pinata.cloud/ipfs";
-      return `${gateway}/${cid}`;
-    }
-    console.log("verify if you have a valid CID: ", metadataCID);
-    return metadataCID;
   }
 
   /**
@@ -130,7 +119,7 @@ return (
         <div className="grid gap-6">
           {vouchers.map(v => {
             const id = v._id || v.id;
-            const image = getImageUrl(v.metadataCID);
+            const image = createGatewayUrl(v.metadataCID);
             return (
               <div
                 key={id}
