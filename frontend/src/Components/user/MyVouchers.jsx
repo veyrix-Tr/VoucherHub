@@ -68,8 +68,20 @@ export default function MyVouchers() {
           <div className="bg-white rounded-lg p-5 max-w-lg w-full">
             <div className="flex justify-between">
               <h3 className="text-lg font-bold">{selectedVoucher.metadata?.name || "Voucher"}</h3>
-              <button onClick={() => setSelectedVoucher(null)} className="text-gray-500">Close</button>
+              <button className="text-gray-500 hover:text-gray-700"
+                onClick={() => setSelectedVoucher(null)}>
+                Close
+              </button>
             </div>
+            {selectedVoucher.imageUrl && (
+              <div className="w-full h-40 bg-gray-100 rounded flex items-center justify-center mb-3">
+                <img
+                  src={selectedVoucher.imageUrl}
+                  alt={selectedVoucher.metadata?.name}
+                  className="object-contain max-h-full"
+                />
+              </div>
+            )}
             <p className="text-sm text-gray-600">{selectedVoucher.metadata?.description}</p>
           </div>
         </div>

@@ -13,7 +13,7 @@ export default function RedeemVoucher({ voucher, onClose, onSuccess }) {
   const CHAIN_ID = import.meta.env.VITE_CHAIN_ID || "11155111";
 
   if (voucher) {
-    const maxAvailable = voucher.maxMint - (voucher.redemptions?.reduce((sum, r) => sum + r.amount, 0) || 0);
+    const availableBalance = Number(voucher.balance || 0);
 
     const handleRedeem = async () => {
       if (!signer || !account) {
@@ -65,12 +65,12 @@ export default function RedeemVoucher({ voucher, onClose, onSuccess }) {
 
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Amount to redeem (Max: {maxAvailable})
+              Amount to redeem (Max: {availableBalance})
             </label>
             <input
               type="number"
               min="1"
-              max={maxAvailable}
+              max={availableBalance}
               value={amount}
               onChange={(e) => setAmount(parseInt(e.target.value) || 1)}
               className="w-full border rounded px-3 py-2"
@@ -89,7 +89,7 @@ export default function RedeemVoucher({ voucher, onClose, onSuccess }) {
             <button
               onClick={handleRedeem}
               className="px-4 py-2 bg-green-600 text-white rounded disabled:bg-green-400"
-              disabled={loading || amount > maxAvailable}
+              disabled={loading || amount > availableBalance}
             >
               {loading ? "Processing..." : "Redeem"}
             </button>

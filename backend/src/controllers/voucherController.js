@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
 import Voucher from "../models/Voucher.js";
 import merchantRegistryAbi from '../abi/MerchantRegistry.json' with { type: "json" };
+import voucherAbi from '../abi/VoucherERC1155.json' with { type: "json" };
 
 export const createVoucher = async (req, res) => {
   try {
@@ -75,18 +76,41 @@ export const createVoucher = async (req, res) => {
 
 export const getVouchers = async (req, res) => {
   try {
-    const { status, merchant, voucherId, limit = 10, page = 1 } = req.query;
+    const { status, merchant, voucherId, owner, limit = 10, page = 1 } = req.query;
 
     const filter = {};
     if (status) filter.status = status;
     if (merchant) filter.merchant = merchant.toLowerCase();
     if (voucherId) filter.voucherId = voucherId;
 
-    const vouchers = await Voucher.find(filter)
+    let vouchers = await Voucher.find(filter)
       .skip((page - 1) * limit)
       .limit(parseInt(limit))
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean(); // <--- directly return plain JS objects
 
+
+    if (owner) {
+      const provider = new ethers.providers.JsonRpcProvider(process.env.RPC_URL);
+      const VOUCHER_CONTRACT_ADDRESS = process.env.VOUCHER_CONTRACT_ADDRESS
+      const voucherContract = new ethers.Contract(VOUCHER_CONTRACT_ADDRESS, voucherAbi, provider);
+
+      // due to await can't use map because map doesn’t wait for promises. It just returns an array of promises while 'for...of' runs each iteration sequentially, await pauses until balanceOf finishes.
+      /** 
+       * balanceOf(owner, v.voucherId) returns a BigNumber (from ethers.js) because token balances can be very large Example: BigNumber { _hex: "0x05", ... } (which means 5)
+       * Since it’s a BigNumber, you can’t do balance > 0 directly Instead, ethers.js BigNumber has helper methods like .gt() (greater than), .lt() (less than), .eq() (equal)
+        So balance.gt(0) means “is balance greater than 0?”
+
+      */
+      const results = [];
+      for (const v of vouchers) {
+        const balance = await voucherContract.balanceOf(owner, v.voucherId);
+        if (balance.gt(0)) {
+          results.push({ ...v, balance: balance.toString() });
+        }
+      }
+      vouchers = results;
+    }
     res.json(vouchers);
 
   } catch (err) {
@@ -101,7 +125,7 @@ export const getVoucherById = async (req, res) => {
     if (!voucher) {
       return res.status(404).json({ error: "Voucher not found" });
     }
-    res.json(voucher);
+    res.json(voucher.toObject());
 
   } catch (err) {
     console.error("Error fetching voucher:", err);
