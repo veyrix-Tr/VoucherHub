@@ -31,7 +31,7 @@ export default function RedeemVoucher() {
       });
       alert(`Voucher redeemed! Tx: ${receipt.transactionHash}`);
       setVoucherId("");
-
+      
     } catch (err) {
       console.error("Redeem error:", err);
       alert(err?.reason || err?.response?.data?.error || "Redeem failed");
