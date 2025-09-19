@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useWallet } from "../Context/WalletContext.jsx";
-import { fetchVouchersByStatus } from "../utils/fetchVoutchers.js";
+import { fetchVouchersByStatus } from "../utils/fetchVouchers.js";
 
 export default function Marketplace() {
 

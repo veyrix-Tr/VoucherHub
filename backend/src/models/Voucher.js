@@ -17,10 +17,14 @@ const voucherSchema = new mongoose.Schema({
   },
   approvedTxHash: { type: String },
   notes: { type: String },
-  redeemedBy: { type: String, lowercase: true },
-  redeemedTxHash: { type: String },
-  redeemedAt: { type: Date },
-
+  redemptions: [
+    {
+      redeemer: { type: String, lowercase: true, required: true },
+      amount: { type: Number, required: true },
+      txHash: { type: String, required: true },
+      redeemedAt: { type: Date, default: Date.now }
+    }
+  ]
 }, { timestamps: true });
 
 voucherSchema.index({ voucherId: 1, nonce: 1 }, { unique: true });

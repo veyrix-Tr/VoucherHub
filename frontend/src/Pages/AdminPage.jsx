@@ -4,7 +4,7 @@ import { ethers } from "ethers";
 import { useWallet } from "../Context/WalletContext.jsx";
 import VoucherABI from "../../../backend/src/abi/VoucherERC1155.json";
 import addresses from "../contracts/addresses.js";
-import { fetchVouchersByStatus } from "../utils/fetchVoutchers.js";
+import { fetchVouchersByStatus } from "../utils/fetchVouchers.js";
 
 export default function AdminPage() {
   const { provider, signer, account } = useWallet();
