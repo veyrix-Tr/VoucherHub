@@ -1,12 +1,16 @@
-// src/pages/MyVouchers.jsx
 import React, { useEffect, useState } from "react";
 import { useWallet } from "../../Context/WalletContext.jsx";
 import { fetchVouchersByOwner } from "../../utils/fetchVouchers.js";
+import RedeemVoucher from "./RedeemVoucher.jsx";
 
 export default function MyVouchers() {
   const { account } = useWallet();
   const [vouchers, setVouchers] = useState([]);
   const [loading, setLoading] = useState(false);
+  // the voucher we have selected for see, means it would pop up the voucher
+  const [selectedVoucher, setSelectedVoucher] = useState(null);
+  // the voucher we have selected for redeem, means it would pop up the redeem page for that
+  const [redeemingVoucher, setRedeemingVoucher] = useState(null);
 
   useEffect(() => {
     if (account) {
@@ -14,50 +18,110 @@ export default function MyVouchers() {
     }
   }, [account]);
 
+  const now = Math.floor(Date.now() / 1000);
+  const activeVouchers = vouchers.filter((v) => v.status !== "redeemed" && Number(v.expiry) > now);
+  const expiredVouchers = vouchers.filter((v) => v.status !== "redeemed" && Number(v.expiry) <= now);
+  const redeemedVouchers = vouchers.filter((v) => v.status === "redeemed");
+
+  const handleRedeemSuccess = () => {
+    setRedeemingVoucher(null);
+    fetchVouchersByOwner(account, setVouchers, setLoading);
+  };
+
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-semibold mb-4">
-        My Vouchers ({account ? account.slice(0, 6) + "..." + account.slice(-4) : "Not Connected"})
-      </h1>
+    <div className="bg-white shadow rounded-lg p-5">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-semibold text-gray-800">My Vouchers</h2>
+        <button
+          onClick={() => fetchVouchersByOwner(account, setVouchers, setLoading)}
+          className="px-3 py-1 bg-gray-100 rounded text-sm"
+        >
+          Refresh
+        </button>
+      </div>
 
       {loading ? (
-        <p>Loading your vouchers...</p>
-      ) : vouchers.length === 0 ? (
-        <p>You don’t own any vouchers yet.</p>
+        <p>Loading vouchers...</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {vouchers.map((v) => {
-            const expiry = v.metadata?.expiry
-              ? new Date(v.metadata.expiry).toLocaleString()
-              : "N/A";
+        <>
+          <VoucherSection
+            title={`Active (${activeVouchers.length})`}
+            items={activeVouchers}
+            onOpen={setSelectedVoucher}
+            onRedeem={setRedeemingVoucher}
+          />
+          <VoucherSection
+            title={`Expired (${expiredVouchers.length})`}
+            items={expiredVouchers}
+            onOpen={setSelectedVoucher}
+          />
+          <VoucherSection
+            title={`Redeemed (${redeemedVouchers.length})`}
+            items={redeemedVouchers}
+            onOpen={setSelectedVoucher}
+          />
+        </>
+      )}
 
-            return (
-              <div key={v._id || v.voucherId} className="border rounded-lg p-4 shadow hover:shadow-lg transition">
+      {selectedVoucher && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg p-5 max-w-lg w-full">
+            <div className="flex justify-between">
+              <h3 className="text-lg font-bold">{selectedVoucher.metadata?.name || "Voucher"}</h3>
+              <button onClick={() => setSelectedVoucher(null)} className="text-gray-500">Close</button>
+            </div>
+            <p className="text-sm text-gray-600">{selectedVoucher.metadata?.description}</p>
+          </div>
+        </div>
+      )}
+
+      {redeemingVoucher && (
+        <RedeemVoucher
+          voucher={redeemingVoucher}
+          onClose={() => setRedeemingVoucher(null)}
+          onSuccess={handleRedeemSuccess}
+        />
+      )}
+    </div>
+  );
+}
+
+function VoucherSection({ title, items, onOpen, onRedeem }) {
+  return (
+    <div className="mb-6">
+      <h3 className="text-lg font-medium mb-3">{title}</h3>
+      {items.length === 0 ? (
+        <div className="text-gray-500">None</div>
+      ) : (
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {items.map((v) => (
+            <div key={v._id} className="border rounded-lg p-3 bg-white shadow-sm flex flex-col">
+              <div className="h-36 bg-gray-50 rounded flex items-center justify-center">
                 {v.imageUrl ? (
-                  <img
-                    src={v.imageUrl}
-                    alt={v.metadata?.name || "Voucher"}
-                    className="w-full h-40 object-cover rounded"
-                  />
+                  <img src={v.imageUrl} alt={v.metadata?.name} className="object-cover w-full h-full" />
                 ) : (
-                  <div className="w-full h-40 bg-gray-200 flex items-center justify-center rounded">
-                    No Image
-                  </div>
+                  <span>No image</span>
                 )}
-
-                <h3 className="font-bold mt-2">{v.metadata?.name || "Unnamed Voucher"}</h3>
-                <p className="text-sm text-gray-600">{v.metadata?.description || "No description"}</p>
-
-                <p className="mt-1 text-sm">Price: {v.price} wei</p>
-                <p className="text-sm">Expiry: {expiry}</p>
-
-                {/* Redeem button (not wired yet) */}
-                <button className="mt-3 w-full bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700">
-                  Redeem
-                </button>
               </div>
-            );
-          })}
+              <div className="mt-2 font-semibold">{v.metadata?.name}</div>
+              <div className="text-xs text-gray-500">
+                {v.metadata?.description?.slice(0, 80)}
+              </div>
+              <div className="mt-3 flex justify-between items-center">
+                <button onClick={() => onOpen(v)} className="text-blue-600 underline text-sm">
+                  View
+                </button>
+                {onRedeem && title.startsWith("Active") && (
+                  <button
+                    onClick={() => onRedeem(v)}
+                    className="px-3 py-1 bg-green-600 text-white rounded text-sm"
+                  >
+                    Redeem
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>

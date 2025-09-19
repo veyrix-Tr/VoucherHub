@@ -2,39 +2,29 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useWallet } from "../../Context/WalletContext.jsx";
 
+const BACKEND = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+
 export default function RequestMerchantForm() {
   const { account } = useWallet();
-  const [formData, setFormData] = useState({
-    name: "",
-    reason: "",
-  });
+  const [businessName, setBusinessName] = useState("");
+  const [details, setDetails] = useState("");
   const [loading, setLoading] = useState(false);
-  const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
-  function handleChange(e) {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  }
-
-  async function handleRequest(e) {
-    e.preventDefault();
-    if (!formData.name.trim() || !formData.reason.trim()) {
-      return alert("Please provide both name and reason.");
-    }
-
+  async function handleSubmit() {
+    if (!account) return alert("Connect wallet");
+    if (!businessName || !details) return alert("Please fill name and details");
     setLoading(true);
     try {
-      await axios.post(`${backendUrl}/api/merchants/request`, {
-        user: account,
-        ...formData,
+      await axios.post(`${BACKEND}/api/merchant-requests`, {
+        address: account,
+        name: businessName,
+        details
       });
-      alert("Merchant request submitted!");
-      setFormData({ name: "", reason: "" });
+      alert("Merchant request submitted. Admin will review it.");
+      setBusinessName("");
+      setDetails("");
     } catch (err) {
-      console.error("Request error:", err);
+      console.error("merchant request error", err);
       alert(err?.response?.data?.error || "Request failed");
     } finally {
       setLoading(false);
@@ -42,39 +32,33 @@ export default function RequestMerchantForm() {
   }
 
   return (
-    <form
-      onSubmit={handleRequest}
-      className="bg-white shadow rounded-lg p-4 max-w-md mx-auto"
-    >
-      <h2 className="text-xl font-semibold mb-4 text-gray-800">
-        Request Merchant Role
-      </h2>
+    <div className="bg-white shadow rounded-lg p-4">
+      <h2 className="text-xl font-semibold mb-3 text-gray-800">Request Merchant Role</h2>
 
+      <label className="block text-sm text-gray-600 mb-1">Business / Shop name</label>
       <input
-        type="text"
-        name="name"
-        value={formData.name}
-        onChange={handleChange}
-        placeholder="Your Name"
-        className="w-full border rounded px-3 py-2 mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        value={businessName}
+        onChange={(e) => setBusinessName(e.target.value)}
+        className="w-full border rounded px-3 py-2 mb-3"
+        placeholder="My Coffee Shop"
       />
-      
+
+      <label className="block text-sm text-gray-600 mb-1">Short details (what you sell / why)</label>
       <textarea
-        name="reason"
-        value={formData.reason}
-        onChange={handleChange}
-        placeholder="Why do you want to become a merchant?"
-        className="w-full border rounded px-3 py-2 mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        value={details}
+        onChange={(e) => setDetails(e.target.value)}
+        className="w-full border rounded px-3 py-2 mb-3"
         rows={4}
+        placeholder="Tell admin why you should be a merchant..."
       />
 
       <button
-        type="submit"
+        onClick={handleSubmit}
         disabled={loading}
-        className="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400"
+        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400"
       >
         {loading ? "Submitting..." : "Submit Request"}
       </button>
-    </form>
+    </div>
   );
 }
