@@ -166,32 +166,47 @@ export const rejectVoucher = async (req, res) => {
 
 export const redeemVoucher = async (req, res) => {
   try {
-    const { redeemer, txHash } = req.body;
-    if (!redeemer || !txHash) {
-      return res.status(400).json({ error: "redeemer and txHash are required" });
-    }
+    const { redeemer, txHash, amount } = req.body;
+    const voucherId = req.params.id;
 
-    const voucher = await Voucher.findById(req.params.id);
+    if (!redeemer || !txHash || !amount) {
+      return res.status(400).json({ error: "redeemer, txHash, and amount are required" });
+    }
+    const voucher = await Voucher.findById(voucherId);
     if (!voucher) {
       return res.status(404).json({ error: "Voucher not found" });
     }
-    if (voucher.status === "redeemed") {
-      return res.status(400).json({ error: "Voucher already redeemed" });
-    }
 
-    voucher.status = "redeemed";
-    voucher.redeemedBy = redeemer;
-    voucher.redeemedTxHash = txHash;
-    voucher.redeemedAt = new Date();
+    // reduce reduces an array to a single value by applying a function repeatedly to each element
+    const totalRedeemed = voucher.redemptions
+      ? voucher.redemptions.reduce((sum, r) => sum + r.amount, 0)
+      : 0;
+
+    if (totalRedeemed + amount > voucher.maxMint) {
+      return res.status(400).json({ error: "Exceeds max mint limit" });
+    }
+    const redemptionEntry = {
+      redeemer: redeemer.toLowerCase(),
+      amount,
+      txHash,
+      redeemedAt: new Date()
+    };
+
+    voucher.redemptions = voucher.redemptions || [];
+    voucher.redemptions.push(redemptionEntry);
+
+    if (totalRedeemed + amount >= voucher.maxMint) {
+      voucher.status = "redeemed";
+    }
 
     await voucher.save();
 
     res.json({
       message: "Voucher redeemed",
-      id: voucher._id,
+      voucherId: voucher._id,
       status: voucher.status,
-      redeemer: voucher.redeemedBy,
-      txHash: voucher.redeemedTxHash,
+      totalRedeemed: totalRedeemed + amount,
+      redemption: redemptionEntry
     });
 
   } catch (err) {
