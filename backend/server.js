@@ -2,10 +2,11 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import helmet from "helmet";
-import Voucher from "./src/models/Voucher.js";
 import dotenv from "dotenv";
 import connectDB from "./src/config/db.js";
 import voucherRoutes from "./src/routes/voucherRoutes.js";
+import merchantRequestRoutes from "./routes/merchantRequestRoutes.js";
+
 
 dotenv.config();
 
@@ -17,6 +18,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 app.use("/api/vouchers", voucherRoutes);
+app.use("/api/merchant-requests", merchantRequestRoutes);
 
 const PORT = process.env.PORT || 4000;
 

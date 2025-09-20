@@ -27,13 +27,20 @@ export default function MyVouchers() {
     setRedeemingVoucher(null);
     fetchVouchersByOwner(account, setVouchers, setLoading);
   };
+  const refreshButton = () => {
+    if (account) {
+      fetchVouchersByOwner(account, setVouchers, setLoading);
+    } else {
+      alert ("Please connect your wallet first!");
+    }
+  }
 
   return (
     <div className="bg-white shadow rounded-lg p-5">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold text-gray-800">My Vouchers</h2>
         <button
-          onClick={() => fetchVouchersByOwner(account, setVouchers, setLoading)}
+          onClick={() => refreshButton()}
           className="px-3 py-1 bg-gray-100 rounded text-sm"
         >
           Refresh

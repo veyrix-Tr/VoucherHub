@@ -3,7 +3,6 @@ import { approveVoucher, createVoucher, getVoucherById, getVouchers, redeemVouch
 import { validateVoucher, validateApprove, validateReject } from "../middleware/validateVoucher.js";
 import { protect, adminOnly } from "../middleware/authMiddleware.js";
 
-
 const router = express.Router();
 
 router.post("/", protect, createVoucher);
