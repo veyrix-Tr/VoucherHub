@@ -22,8 +22,8 @@ export default function ConnectPage() {
     }}>
 
       <div style={{
-        background: "rgba(255, 255, 255, 0.05)",
-        padding: "35px",
+        background: "rgba(255, 255, 255, 0.04)",
+        padding: "37px",
         borderRadius: "20px",
         width: "390px",
         maxWidth: "90vw",

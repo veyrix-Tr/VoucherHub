@@ -2,85 +2,69 @@ import React, { useEffect, useState } from "react";
 import { useWallet } from "../Context/WalletContext.jsx";
 import addresses from "../contracts/addresses.js";
 import MerchantVoucherForm from "../Components/merchant/MerchantVoucherForm.jsx";
+import { fetchVouchersByOwner } from "../utils/fetchVouchers.js";
+import VoucherCard from "../Components/common/VoucherCard.jsx";
 
-export default function MerchantPage({ merchantAddress }) {
-    const { signer, provider, account } = useWallet();
-    const [vouchers, setVouchers] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [chainId, setChainId] = useState(null);
 
-    useEffect(() => {
-        async function getNetwork() {
-            if (provider) {
-                const network = await provider.getNetwork();
-                setChainId(network.chainId);
-            }
-        }
-        getNetwork();
-    }, [provider]);
+export default function MerchantPage() {
+	const { account, signer } = useWallet();
+	const [vouchers, setVouchers] = useState([]);
+	const [loading, setLoading] = useState(false);
+	const [chainId, setChainId] = useState(null);
 
-    useEffect(() => {
-        async function fetchVouchers() {
-            try {
-                setLoading(true);
-                const res = await fetch(`/api/vouchers?merchant=${account}`);
-                const data = await res.json();
-                setVouchers(data);
-            } catch (err) {
-                console.error("Error fetching vouchers:", err);
-            } finally {
-                setLoading(false);
-            }
-        }
-        if (account) fetchVouchers();
-    }, [account]);
+	useEffect(() => {
+		async function getNetwork() {
+			if (signer) {
+				const network = await signer.provider.getNetwork();
+				setChainId(network.chainId);
+			}
+		}
+		getNetwork();
+	}, [signer]);
 
-    return (
-        <div className="p-6">
-            <h1 className="text-2xl font-semibold mb-4">
-                Merchant Dashboard ({account?.slice(0, 6)}...{account?.slice(-4)})
-            </h1>
+	useEffect(() => {
+		if (account) {
+			fetchVouchersByOwner(account, setVouchers, setLoading);
+		}
+	}, [account]);
 
-            <div className="mb-8">
-                <h2 className="text-xl font-medium mb-2">Issue New Voucher</h2>
-                <MerchantVoucherForm signer={signer} contractAddress={addresses[chainId]?.voucherERC1155} />
-            </div>
+	const approvedVouchers = vouchers.filter(v => v.status === "approved");
+	const pendingVouchers = vouchers.filter(v => v.status === "pending");
+	const rejectedVouchers = vouchers.filter(v => v.status === "rejected");
 
-            {/* Voucher List */}
-            <h2 className="text-xl font-medium mb-2">My Vouchers</h2>
-            {loading ? (
-                <p>Loading vouchers...</p>
-            ) : vouchers.length === 0 ? (
-                <p>No vouchers issued yet.</p>
-            ) : (
-                <table className="min-w-full border text-sm">
-                    <thead>
-                        <tr className="bg-gray-100">
-                            <th className="border px-2 py-1">Voucher ID</th>
-                            <th className="border px-2 py-1">Metadata CID</th>
-                            <th className="border px-2 py-1">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {vouchers.map((v, i) => (
-                            <tr key={i}>
-                                <td className="border px-2 py-1">{v.voucherId}</td>
-                                <td className="border px-2 py-1">
-                                    <a
-                                        href={`https://ipfs.io/ipfs/${v.metadataCid}`}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        className="text-blue-600 underline"
-                                    >
-                                        {v.metadataCid.slice(0, 10)}...
-                                    </a>
-                                </td>
-                                <td className="border px-2 py-1">{v.status}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            )}
-        </div>
-    );
+	const renderSection = (title, items) => (
+		loading ? (
+			<p>Loading {title} vouchers...</p>
+		) : (
+			<div className="mb-8">
+				<h2 className="text-xl font-semibold mb-4">{`${title} (${items.length})`}</h2>
+				{items.length === 0 ? (
+					<p className="text-gray-500">No vouchers</p>
+				) : (
+					<div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+						{items.map(v => (
+							<VoucherCard key={v._id} voucher={v} role="merchant" />
+						))}
+					</div>
+				)}
+			</div>
+		)
+	);
+
+	return (
+		<div className="p-6 bg-gray-50 min-h-screen">
+			<h1 className="text-2xl font-bold mb-6">
+				Merchant Dashboard ({account?.slice(0, 6)}...{account?.slice(-4)})
+			</h1>
+
+			<div className="mb-8">
+				<h2 className="text-xl font-medium mb-2">Issue New Voucher</h2>
+				<MerchantVoucherForm signer={signer} contractAddress={addresses[chainId]?.voucherERC1155} />
+			</div>
+
+			{renderSection("Approved", approvedVouchers)}
+			{renderSection("Pending", pendingVouchers)}
+			{renderSection("Rejected", rejectedVouchers)}
+		</div>
+	);
 }

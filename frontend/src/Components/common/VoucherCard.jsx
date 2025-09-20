@@ -3,11 +3,11 @@ import VoucherModal from "./VoucherModal.jsx";
 
 export default function VoucherCard({
   voucher,
+  role,
   onApprove,
   onReject,
   onRedeem,
   onSwap,
-  role,
 }) {
   const [showModal, setShowModal] = useState(false);
 

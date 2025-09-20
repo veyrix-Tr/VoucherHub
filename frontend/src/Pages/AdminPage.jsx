@@ -5,11 +5,11 @@ import { useWallet } from "../Context/WalletContext.jsx";
 import VoucherABI from "../../../backend/src/abi/VoucherERC1155.json";
 import addresses from "../contracts/addresses.js";
 import { fetchVouchersByStatus } from "../utils/fetchVouchers.js";
+import VoucherCard from "../Components/common/VoucherCard.jsx";
+
 
 export default function AdminPage() {
   const { provider, signer, account } = useWallet();
-
-  // usestate for {vouchers}, {is the list of vouchers, loading}
   const [vouchers, setVouchers] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -17,10 +17,10 @@ export default function AdminPage() {
   const [statusLoading, setStatusLoading] = useState({});
 
   const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
-  const CHAIN_ID = provider ? provider._network?.chainId : parseInt(import.meta.env.VITE_CHAIN_ID || "11155111", 10);
+  const CHAIN_ID = provider?.getNetwork()?.chainId || import.meta.env.VITE_CHAIN_ID || "11155111";
   const voucherContractAddress = addresses[CHAIN_ID]?.voucherERC1155 || import.meta.env.VITE_VOUCHER_CONTRACT_ADDRESS;
 
-  // every time account or chainId changes grab pending vouchers
+  // every time account or chainId changes grab pending voucherstatusLoadings
   useEffect(() => {
     fetchVouchersByStatus("pending", setVouchers, setLoading);
   }, [account, CHAIN_ID]);
@@ -42,8 +42,8 @@ export default function AdminPage() {
     try {
       setStatusLoading(prev => ({ ...prev, [id]: true }));
 
-      let voucherIdForContract = ethers.BigNumber.from(v.voucherId);
       const contract = new ethers.Contract(voucherContractAddress, VoucherABI, signer);
+      let voucherIdForContract = ethers.BigNumber.from(v.voucherId);
 
       const tx = await contract.setVoucherApproval(voucherIdForContract, true);
       console.log(tx.hash);
@@ -55,7 +55,7 @@ export default function AdminPage() {
 
     } catch (err) {
       console.error("Approve error", err);
-      alert(err?.response?.data?.error || err.message || "Approval failed");
+      alert(err.message || "Approval failed");
 
     } finally {
       setStatusLoading(prev => ({ ...prev, [id]: false }));
@@ -75,9 +75,11 @@ export default function AdminPage() {
       await axios.put(`${backendUrl}/api/vouchers/${id}/reject`, { notes });
       await fetchVouchersByStatus("pending", setVouchers, setLoading);
       alert("Voucher rejected");
+
     } catch (err) {
       console.error("Reject error", err);
-      alert(err?.response?.data?.error || err.message || "Reject failed");
+      alert(err.message || "Reject failed");
+
     } finally {
       setStatusLoading(prev => ({ ...prev, [id]: false }));
       setShowRejectModal(false);
@@ -92,7 +94,7 @@ export default function AdminPage() {
 
       <div className="mb-6">
         <button
-          onClick={()=>fetchVouchersByStatus("pending", setVouchers, setLoading)}
+          onClick={() => fetchVouchersByStatus("pending", setVouchers, setLoading)}
           disabled={loading}
           className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400 transition"
         >
@@ -103,80 +105,29 @@ export default function AdminPage() {
       {vouchers.length === 0 && !loading ? (
         <div className="text-gray-500 text-center py-10">No pending vouchers</div>
       ) : (
-        <div className="grid gap-6">
-          {vouchers.map(v => {
-            const id = v._id || v.id;
-            return (
-              <div
-                key={id}
-                className="flex flex-col md:flex-row items-center md:items-start p-4 bg-white rounded-lg shadow hover:shadow-lg transition"
-              >
-                <div className="w-full md:w-40 flex-shrink-0 mb-4 md:mb-0">
-                  {v.imageUrl ? (
-                    <img
-                      src={v.imageUrl}
-                      alt="voucher"
-                      className="w-full h-32 object-cover rounded-md"
-                    />
-                  ) : (
-                    <div className="w-full h-32 bg-gray-200 rounded-md flex items-center justify-center text-gray-400">
-                      No Image
-                    </div>
-                  )}
-                </div>
-                <div className="flex-1 md:ml-6">
-                  <div className="mb-2 text-gray-700">
-                    <span className="font-semibold">VoucherId:</span> {String(v.voucherId)}
-                  </div>
-                  <div className="mb-2 text-gray-700">
-                    <span className="font-semibold">Merchant:</span> {v.merchant}
-                  </div>
-                  <div className="mb-2 text-gray-700">
-                    <span className="font-semibold">MaxMint:</span> {String(v.maxMint)}
-                  </div>
-                  <div className="mb-2 text-gray-700">
-                    <span className="font-semibold">Expiry:</span>{" "}
-                    {new Date(Number(v.expiry) * 1000).toLocaleString()}
-                  </div>
-                  <div className="mb-4 text-gray-700">
-                    <span className="font-semibold">Price:</span> {String(v.price)}
-                  </div>
-                  <div className="flex gap-4">
-                    <button
-                      onClick={() => handleApprove(v)}
-                      disabled={!!statusLoading[id]}
-                      className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:bg-gray-400 transition"
-                    >
-                      {statusLoading[id] ? "Approving..." : "Approve (on-chain)"}
-                    </button>
-                    <button
-                      onClick={() => {
-                        // 🔹 open modal for this voucher
-                        setRejectTarget(v);
-                        setRejectText("");
-                        setShowRejectModal(true);
-                      }}
-                      disabled={!!statusLoading[id]}
-                      className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:bg-gray-400 transition"
-                    >
-                      {statusLoading[id] ? "Rejecting..." : "Reject"}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {vouchers.map((v) => (
+            <VoucherCard key={v._id} voucher={v} role="admin"
+              onApprove={(v) => {
+                if (!statusLoading[v._id]) handleApprove(v);
+              }} onReject={(v) => {
+                if (!statusLoading[v._id]) {
+                  setRejectTarget(v);
+                  setRejectText("");
+                  setShowRejectModal(true);
+                }
+              }
+              } />
+          ))}
         </div>
       )}
 
-      {/* 🔹 single modal rendered outside map */}
       {showRejectModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-96 shadow-lg">
             <h2 className="text-lg font-bold mb-3">Reject Voucher</h2>
             <p className="text-sm mb-2">
-              Rejecting voucher:{" "}
-              <strong>{rejectTarget && String(rejectTarget.voucherId)}</strong>
+              Rejecting voucher: <strong>{rejectTarget?.voucherId}</strong>
             </p>
             <textarea
               rows={4}
@@ -196,10 +147,7 @@ export default function AdminPage() {
               >
                 Cancel
               </button>
-              <button
-                onClick={handleRejectSubmit}
-                className="px-4 py-2 bg-red-600 text-white rounded"
-              >
+              <button onClick={handleRejectSubmit} disabled={statusLoading[rejectTarget._id]}className="px-4 py-2 bg-red-600 text-white rounded">
                 Submit
               </button>
             </div>
