@@ -1,5 +1,6 @@
 import React from "react";
 import { useWallet } from "../Context/WalletContext.jsx";
+import metamaskIcon from "../public/images/metamask-icon.png";
 
 export default function ConnectPage() {
   const { account, connectWallet } = useWallet();
@@ -10,8 +11,8 @@ export default function ConnectPage() {
     <div style={{
       position: "fixed",
       inset: 0,
-      background: `
-        linear-gradient(1frontend/src/utils/1683020955metamask-icon-png.png35deg, rgba(12,15,29,0.95) 0%, rgba(28,32,60,0.95) 100%)`,
+      background: `linear-gradient(135deg, rgba(76, 9, 147, 0.95), rgba(10, 24, 128, 0.95)),
+      url(${metamaskIcon}) center/95% no-repeat`,
       zIndex: 9999,
       display: "flex",
       alignItems: "center",
@@ -19,7 +20,7 @@ export default function ConnectPage() {
       fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
       animation: "fadeIn 0.3s ease-out"
     }}>
-      
+
       <div style={{
         background: "rgba(255, 255, 255, 0.05)",
         padding: "35px",
@@ -36,21 +37,21 @@ export default function ConnectPage() {
           width: "80px",
           height: "80px",
           margin: "0 auto 20px",
-          background: "linear-gradient(135deg, #F6851B 0%, #DF6C0C 100%)",
+          background: "linear-gradient(135deg, #1798c6ff 0%, #82cf6aff 100%)",
           borderRadius: "50%",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           boxShadow: "0 5px 15px rgba(246, 133, 27, 0.3)"
         }}>
-          <img src="../utils/1683020955metamask-icon-png.png" alt="MetaMask" width="40" height="40" />
+          <img src={metamaskIcon} alt="MetaMask" width="57" height="57" />
         </div>
 
         <h2 style={{
           marginBottom: "12px",
           color: "white",
-          fontSize: "24px",
-          fontWeight: 600,
+          fontSize: "24.5px",
+          fontWeight: 900,
           letterSpacing: "0.5px"
         }}>
           Connect Your Wallet
@@ -59,7 +60,7 @@ export default function ConnectPage() {
         <p style={{
           marginBottom: "28px",
           color: "rgba(255, 255, 255, 0.7)",
-          fontSize: "15px",
+          fontSize: "14.7px",
           lineHeight: "1.5"
         }}>
           To continue using this application, please connect your MetaMask wallet.
@@ -70,15 +71,15 @@ export default function ConnectPage() {
           style={{
             padding: "14px 24px",
             width: "100%",
-            background: "linear-gradient(135deg, #F6851B 0%, #E27625 100%)",
+            background: "linear-gradient(135deg, #d66902ff 55%, #e46c11ff 100%)",
             color: "white",
             border: "none",
             borderRadius: "12px",
-            fontSize: "16px",
+            fontSize: "16.4px",
             fontWeight: 600,
             cursor: "pointer",
             transition: "all 0.2s ease",
-            boxShadow: "0 4px 12px rgba(230, 118, 37, 0.4)",
+            boxShadow: "0 4px 12px rgba(230, 118, 37, 0.3)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -112,19 +113,25 @@ export default function ConnectPage() {
         }}>
           <p style={{
             margin: "0 0 8px 0",
-            color: "rgba(255, 255, 240, 0.5)",
+            color: "rgba(255, 255, 240, 0.57)",
             fontSize: "15px"
           }}>
             New to Ethereum wallets?
           </p>
-          <a 
-            href="https://metamask.io/" 
-            target="_blank" 
+          <a
+            href="https://metamask.io/"
+            target="_blank"
             rel="noopener noreferrer"
-            style={{color: "#F6851B",textDecoration: "none",fontSize: "15px",fontWeight: 500,transition: "color 0.2s ease"}}
-            onMouseOver={(e) => e.target.style.color = "#FF9D3D"}
-            onMouseOut={(e) => e.target.style.color = "#F6851B"}
-          >
+            style={{ color: "#F6851B", textDecoration: "none", fontSize: "15px", fontWeight: 500, transition: "color 0.2s ease" }}
+            onMouseOver={(e) => {
+              e.target.style.color = "#FF9D3D";
+              e.target.style.textDecoration = "underline";
+            }}
+            onMouseOut={(e) => {
+              e.target.style.color = "#F6851B";
+              e.target.style.textDecoration = "none";
+            }}
+          > 👈 remove underline on unhover
             Learn more
           </a>
         </div>

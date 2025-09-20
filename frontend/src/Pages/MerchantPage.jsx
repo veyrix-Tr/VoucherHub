@@ -41,7 +41,6 @@ export default function MerchantPage({ merchantAddress }) {
                 Merchant Dashboard ({account?.slice(0, 6)}...{account?.slice(-4)})
             </h1>
 
-            {/* New Voucher Form */}
             <div className="mb-8">
                 <h2 className="text-xl font-medium mb-2">Issue New Voucher</h2>
                 <MerchantVoucherForm signer={signer} contractAddress={addresses[chainId]?.voucherERC1155} />
