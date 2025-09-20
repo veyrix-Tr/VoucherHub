@@ -13,6 +13,7 @@ export default function App() {
       <Route path="/" element={<ConnectPage />} />
       <Route path="/merchant" element={<MerchantPage />} />
       <Route path="/admin" element={<AdminPage />} />
+      <Route path="/admin/merchant-requests" element={<AdminMerchantRequests />} />
       <Route path="/marketplace" element={<Marketplace />} />
       <Route path="/wallet" element={<ConnectWallet />} />
       <Route path="/user" element={<UserPage />} />
