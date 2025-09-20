@@ -6,6 +6,7 @@ import AdminPage from "./Pages/AdminPage.jsx";
 import Marketplace from "./Pages/Marketplace.jsx";
 import ConnectWallet from "./Components/ConnectWallet.jsx";
 import UserPage from "./Pages/UserPage.jsx";
+import AdminMerchantRequests from "./Components/admin/AdminMerchantRequests.jsx";
 
 export default function App() {
   return (

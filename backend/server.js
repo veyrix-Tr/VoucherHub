@@ -5,7 +5,7 @@ import helmet from "helmet";
 import dotenv from "dotenv";
 import connectDB from "./src/config/db.js";
 import voucherRoutes from "./src/routes/voucherRoutes.js";
-import merchantRequestRoutes from "./routes/merchantRequestRoutes.js";
+import merchantRequestRoutes from "./src/routes/merchantRequestRoutes.js";
 
 
 dotenv.config();
