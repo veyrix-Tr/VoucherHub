@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useWallet } from "../Context/WalletContext.jsx";
 import addresses from "../contracts/addresses.js";
-import MerchantVoucherForm from "../Components/MerchantVoucherForm.jsx";
+import MerchantVoucherForm from "../Components/merchant/MerchantVoucherForm.jsx";
 
 export default function MerchantPage({ merchantAddress }) {
     const { signer, provider, account } = useWallet();

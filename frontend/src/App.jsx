@@ -4,7 +4,7 @@ import ConnectPage from "./Pages/ConnectPage.jsx";
 import MerchantPage from "./Pages/MerchantPage.jsx";
 import AdminPage from "./Pages/AdminPage.jsx";
 import Marketplace from "./Pages/Marketplace.jsx";
-import ConnectWallet from "./Components/ConnectWallet.jsx";
+import ConnectWallet from "./Components/connect/ConnectWallet.jsx";
 import UserPage from "./Pages/UserPage.jsx";
 import AdminMerchantRequests from "./Components/admin/AdminMerchantRequests.jsx";
 

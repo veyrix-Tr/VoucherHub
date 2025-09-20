@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ethers, utils, BigNumber } from "ethers";
-import { uploadMetadata } from "../utils/ipfs.js";
-import { buildVoucherTypedData } from "../utils/eip712.js";
+import { uploadMetadata } from "../../utils/ipfs.js";
+import { buildVoucherTypedData } from "../../utils/eip712.js";
 import axios from "axios";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;

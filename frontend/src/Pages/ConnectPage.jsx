@@ -131,7 +131,7 @@ export default function ConnectPage() {
               e.target.style.color = "#F6851B";
               e.target.style.textDecoration = "none";
             }}
-          > 👈 remove underline on unhover
+          >
             Learn more
           </a>
         </div>
