@@ -17,7 +17,9 @@ export default function AdminPage() {
   const [statusLoading, setStatusLoading] = useState({});
 
   const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+
   const CHAIN_ID = provider?._network?.chainId || parseInt(import.meta.env.VITE_CHAIN_ID || "11155111", 10);
+  
   const voucherContractAddress = addresses[CHAIN_ID]?.voucherERC1155 || import.meta.env.VITE_VOUCHER_CONTRACT_ADDRESS;
 
   // every time account or chainId changes grab pending voucherstatusLoadings

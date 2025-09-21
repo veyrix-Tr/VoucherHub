@@ -17,6 +17,13 @@ export default function Marketplace() {
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <h1 className="text-2xl font-bold mb-6 text-gray-800">Marketplace</h1>
+      <button
+        onClick={() => fetchVouchersByStatus("approved", setVouchers, setLoading)}
+        disabled={loading}
+        className="px-4 py-2 bg-blue-200 rounded text-sm disabled:opacity-50"
+      >
+        Refresh
+      </button>
 
       {loading ? (
         <div className="text-center text-gray-500">Loading vouchers...</div>

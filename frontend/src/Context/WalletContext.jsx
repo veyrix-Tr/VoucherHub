@@ -37,7 +37,7 @@ export const WalletProvider = ({ children }) => {
                 setProvider(provider);
                 setSigner(signer);
                 setAccount(address);
-                navigate("/merchant")
+                navigate("/user")
             } catch (error) {
                 console.error(error.message);
             }
