@@ -3,7 +3,6 @@ import { useWallet } from "../../Context/WalletContext.jsx";
 import { fetchMerchantRequests, approveMerchantRequest, rejectMerchantRequest } from "../../utils/utilsMerchantRequests.js";
 import MerchantRegistryABI from "../../../../backend/src/abi/MerchantRegistry.json";
 import CONTRACT_ADDRESSES from "../../contracts/addresses.js";
-import { ethers } from "ethers";
 
 export default function AdminMerchantRequests() {
   const { signer } = useWallet();

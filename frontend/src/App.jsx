@@ -7,6 +7,7 @@ import Marketplace from "./Pages/Marketplace.jsx";
 import ConnectWallet from "./Components/connect/ConnectWallet.jsx";
 import UserPage from "./Pages/UserPage.jsx";
 import AdminMerchantRequests from "./Components/admin/AdminMerchantRequests.jsx";
+import Navbar from "./Components/common/navbar.jsx";
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
       <Route path="/marketplace" element={<Marketplace />} />
       <Route path="/wallet" element={<ConnectWallet />} />
       <Route path="/user" element={<UserPage />} />
+      <Route path="/navbar" element={<Navbar />} />
 
     </Routes>
   );
