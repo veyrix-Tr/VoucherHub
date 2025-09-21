@@ -4,6 +4,7 @@ import VoucherModal from "./VoucherModal.jsx";
 export default function VoucherCard({
   voucher,
   role,
+  userBalance,
   onApprove,
   onReject,
   onRedeem,

@@ -31,6 +31,8 @@ export default function MerchantPage() {
 	const approvedVouchers = vouchers.filter(v => v.status === "approved");
 	const pendingVouchers = vouchers.filter(v => v.status === "pending");
 	const rejectedVouchers = vouchers.filter(v => v.status === "rejected");
+	const redeemedVouchers = vouchers.filter(v => v.status === "redeemed");
+
 
 	const renderSection = (title, items) => (
 		loading ? (
@@ -65,6 +67,7 @@ export default function MerchantPage() {
 			{renderSection("Approved", approvedVouchers)}
 			{renderSection("Pending", pendingVouchers)}
 			{renderSection("Rejected", rejectedVouchers)}
+			{renderSection("Redeemed", redeemedVouchers)}
 		</div>
 	);
 }

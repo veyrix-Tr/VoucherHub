@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useWallet } from "../Context/WalletContext.jsx";
 import { fetchVouchersByStatus } from "../utils/fetchVouchers.js";
+import VoucherCard from "../Components/common/VoucherCard.jsx";
 
 export default function Marketplace() {
 
   const [vouchers, setVouchers] = useState([]);
   const [loading, setLoading] = useState(false)
-
   const { account } = useWallet();
 
   useEffect(() => {
@@ -15,50 +15,28 @@ export default function Marketplace() {
   }, [account])
 
   return (
-    <div style={{ padding: 24 }}>
-      <h1>Marketplace</h1>
+    <div className="p-6 bg-gray-50 min-h-screen">
+      <h1 className="text-2xl font-bold mb-6 text-gray-800">Marketplace</h1>
 
       {loading ? (
-        <p>Loading vouchers...</p>
+        <div className="text-center text-gray-500">Loading vouchers...</div>
       ) : vouchers.length === 0 ? (
-        <p>No approved vouchers found.</p>
+        <div className="text-center text-gray-500">No approved vouchers found.</div>
       ) : (
-        <div className="grid grid-cols-3 gap-4 mt-4">
-          {vouchers.map(v => {
-            if (!v.metadata) {
-              return (
-                <div key={v._id} className="border rounded-lg p-3 shadow text-red-500">
-                  Metadata missing
-                </div>
-              );
-            }
-            const expiry = new Date(v.metadata.expiry).toLocaleString();
-
-            return (
-              <div key={v._id} className="border rounded-lg p-3 shadow">
-                {v.imageUrl ? (
-                  <img
-                    src={v.imageUrl}
-                    alt={v.metadata.name || "Voucher"}
-                    className="w-full h-48 object-cover rounded-md shadow-sm"
-                  />
-                ) : (
-                  <div className="w-full h-40 bg-gray-200 flex items-center justify-center">
-                    No Image
-                  </div>
-                )}
-                <h3 className="font-bold mt-2">{v.metadata.name || "Unnamed Voucher"}</h3>
-                <p className="text-sm text-gray-600">{v.metadata.description}</p>
-                <p>Price: {v.price} wei</p>
-                <p>Expiry: {expiry}</p>
-              </div>
-            )
-          })}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {vouchers.map((v) => (
+            <VoucherCard key={v._id} voucher={v} role="marketplace" />
+          ))}
         </div>
       )}
-      <Link to="/">
-        <button className="mt-6 px-4 py-2 bg-gray-500 text-white rounded">Back</button>
-      </Link>
+
+      <div className="mt-8">
+        <Link to="/">
+          <button className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">
+            Back
+          </button>
+        </Link>
+      </div>
     </div>
   );
 }

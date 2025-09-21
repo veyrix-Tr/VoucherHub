@@ -17,7 +17,7 @@ export default function AdminPage() {
   const [statusLoading, setStatusLoading] = useState({});
 
   const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
-  const CHAIN_ID = provider?.getNetwork()?.chainId || import.meta.env.VITE_CHAIN_ID || "11155111";
+  const CHAIN_ID = provider?._network?.chainId || parseInt(import.meta.env.VITE_CHAIN_ID || "11155111", 10);
   const voucherContractAddress = addresses[CHAIN_ID]?.voucherERC1155 || import.meta.env.VITE_VOUCHER_CONTRACT_ADDRESS;
 
   // every time account or chainId changes grab pending voucherstatusLoadings
@@ -147,7 +147,9 @@ export default function AdminPage() {
               >
                 Cancel
               </button>
-              <button onClick={handleRejectSubmit} disabled={statusLoading[rejectTarget._id]}className="px-4 py-2 bg-red-600 text-white rounded">
+              <button disabled={rejectTarget && statusLoading[rejectTarget._id]} 
+              onClick={handleRejectSubmit} 
+              className="px-4 py-2 bg-red-600 text-white rounded">
                 Submit
               </button>
             </div>

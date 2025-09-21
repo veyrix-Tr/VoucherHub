@@ -23,11 +23,7 @@ export default function MyVouchers() {
   const expiredVouchers = vouchers.filter((v) => v.status !== "redeemed" && Number(v.expiry) <= now);
   const redeemedVouchers = vouchers.filter((v) => v.status === "redeemed");
 
-  const handleRedeemSuccess = () => {
-    setRedeemingVoucher(null);
-    fetchVouchersByOwner(account, setVouchers, setLoading);
-  };
-  const refreshButton = () => {
+  const refresh = () => {
     if (account) {
       fetchVouchersByOwner(account, setVouchers, setLoading);
     } else {
@@ -35,14 +31,16 @@ export default function MyVouchers() {
     }
   }
 
+  const handleRedeemSuccess = () => {
+    setRedeemingVoucher(null);
+    refresh();
+  };
+
   return (
     <div className="bg-white shadow rounded-lg p-5">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold text-gray-800">My Vouchers</h2>
-        <button
-          onClick={() => refreshButton()}
-          className="px-3 py-1 bg-gray-100 rounded text-sm"
-        >
+        <button onClick={()=>refresh()} className="px-3 py-1 bg-gray-100 rounded text-sm">
           Refresh
         </button>
       </div>
