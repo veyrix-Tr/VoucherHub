@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import githubIcon from "../../public/images/github-mark-white.png";
+import githubIcon from "../../public/images/github-icon.png";
 import { useWallet } from "../../Context/WalletContext.jsx";
 import { useLocation } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
@@ -33,7 +33,7 @@ const Navbar = ({ currentRole = 'user', isMarketplacePage = false }) => {
   const roleConfig = {
     admin: { homeUrl: '/admin', displayName: 'Admin', gradient: 'from-red-500 to-red-600' },
     merchant: { homeUrl: '/merchant', displayName: 'Merchant', gradient: 'from-green-400 to-indigo-800' },
-    user: { homeUrl: '/dashboard', displayName: 'User', gradient: 'from-green-600 to-green-500' }
+    user: { homeUrl: '/user', displayName: 'User', gradient: 'from-green-600 to-green-500' }
   };
 
   return (
@@ -70,7 +70,7 @@ const Navbar = ({ currentRole = 'user', isMarketplacePage = false }) => {
         </div>
 
         <div className="flex items-center space-x-16">
-          <div className={`px-3 py-1 rounded-full text-yellow-100 bg-gradient-to-r ${roleConfig[currentRole].gradient} shadow-md flex items-center space-x-2`}>
+          <div className={`flex items-center px-3 py-1 rounded-full text-yellow-100 bg-gradient-to-r ${roleConfig[currentRole].gradient} shadow-md flex items-center space-x-2`}>
             <span className={`text-[20px] font-bold tracking-wide px-2 pt-1`}>
               {roleConfig[currentRole].displayName}
             </span>
