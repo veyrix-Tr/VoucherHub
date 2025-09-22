@@ -15,12 +15,16 @@ export default function ConnectPage() {
       url(${metamaskIcon}) center/95% no-repeat`,
       zIndex: 9999,
       display: "flex",
+      flexDirection: "column",
       alignItems: "center",
       justifyContent: "center",
+      gap: "45px",
       fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
       animation: "fadeIn 0.3s ease-out"
     }}>
-
+      <div className="brand text-[55px]">
+        VoucherSwap
+      </div>
       <div style={{
         background: "rgba(255, 255, 255, 0.04)",
         padding: "37px",

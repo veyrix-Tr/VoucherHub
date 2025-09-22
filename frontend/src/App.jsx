@@ -1,4 +1,5 @@
 import React from "react";
+import { Toaster } from "react-hot-toast";
 import { Routes, Route } from "react-router-dom";
 import ConnectPage from "./Pages/ConnectPage.jsx";
 import MerchantPage from "./Pages/MerchantPage.jsx";
@@ -11,16 +12,19 @@ import Navbar from "./Components/common/navbar.jsx";
 
 export default function App() {
   return (
-    <Routes>
-      <Route path="/" element={<ConnectPage />} />
-      <Route path="/merchant" element={<MerchantPage />} />
-      <Route path="/admin" element={<AdminPage />} />
-      <Route path="/admin/merchant-requests" element={<AdminMerchantRequests />} />
-      <Route path="/marketplace" element={<Marketplace />} />
-      <Route path="/wallet" element={<ConnectWallet />} />
-      <Route path="/user" element={<UserPage />} />
-      <Route path="/navbar" element={<Navbar />} />
+    <>
+      <Routes>
+        <Route path="/" element={<ConnectPage />} />
+        <Route path="/merchant" element={<MerchantPage />} />
+        <Route path="/admin" element={<AdminPage />} />
+        <Route path="/admin/merchant-requests" element={<AdminMerchantRequests />} />
+        <Route path="/marketplace" element={<Marketplace />} />
+        <Route path="/wallet" element={<ConnectWallet />} />
+        <Route path="/user" element={<UserPage />} />
+        <Route path="/navbar" element={<Navbar />} />
 
-    </Routes>
+      </Routes>
+      <Toaster position="top-right" richColors />
+    </>
   );
 }
