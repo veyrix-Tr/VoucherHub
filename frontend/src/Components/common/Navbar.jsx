@@ -1,12 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import githubIcon from "../../public/images/github-icon.png";
 import { useWallet } from "../../Context/WalletContext.jsx";
-import { useLocation } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import Marketplace from '../../Pages/Marketplace.jsx';
-import UserPage from '../../Pages/UserPage.jsx';
-import AdminPage from '../../Pages/AdminPage.jsx';
-import MerchantPage from '../../Pages/MerchantPage.jsx';
 import { NavLink } from "react-router-dom";
 
 const Navbar = ({ currentRole, roleConfig }) => {
@@ -25,29 +20,39 @@ const Navbar = ({ currentRole, roleConfig }) => {
   };
 
   return (
-    <nav className="bg-gradient-to-r from-blue-600 to-purple-600 backdrop-blur-md bg-opacity-90 shadow-lg p-4">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
+    <nav className="bg-gradient-to-r from-blue-600 to-purple-600 backdrop-blur-md bg-opacity-90 shadow-lg p-5">
+      <div className="max-w-9xl mx-auto flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <div className="w-10 h-10 bg-black bg-opacity-20 rounded-lg flex items-center justify-center hover:scale-110 transition-transform duration-200">
+          <div className="w-12 h-12 bg-black bg-opacity-20 rounded-lg flex items-center justify-center hover:scale-110 transition-transform duration-200">
             {/* Placeholder for logo - replace with your image */}
             <img src={""} alt="" className='w-7 absolute' />
           </div>
-          <NavLink to="/" className="flex items-center gap-2 brand text-[40px]">
+          <NavLink to={`/${currentRole}`} className="flex items-center gap-2 brand text-[42px]">
             VoucherSwap
           </NavLink>
         </div>
 
         <div className="flex items-center space-x-9">
-          <NavLink to={`/${currentRole}`} className={({ isActive }) =>
-            `relative px-3 py-2 rounded-md text-[20px] font-medium transition-colors duration-200 ${isActive ? "text-white font-bold" : "text-gray-300 hover:text-white"}`
-          }>
-            Home
+          <NavLink to={`/${currentRole}`} className="relative px-3 py-2 rounded-md text-[20px] font-medium transition-colors duration-200 text-gray-300 hover:text-white">
+            {({ isActive }) => (
+              <>
+                <span className={isActive ? "text-white font-bold" : ""}>Home</span>
+                {isActive && (
+                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-white transition-all duration-300"></span>
+                )}
+              </>
+            )}
           </NavLink>
 
-          <NavLink to="/marketplace" className={({ isActive }) =>
-            `relative px-3 py-2 rounded-md text-[20px] font-medium transition-colors duration-200 ${isActive ? "text-white font-bold" : "text-gray-300 hover:text-white"}`
-          }>
-            Marketplace
+          <NavLink to="/marketplace" className="relative px-3 py-2 rounded-md text-[20px] font-medium transition-colors duration-200 text-gray-300 hover:text-white">
+            {({ isActive }) => (
+              <>
+                <span className={isActive ? "text-white font-bold" : ""}>Marketplace</span>
+                {isActive && (
+                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-white transition-all duration-300"></span>
+                )}
+              </>
+            )}
           </NavLink>
 
           <a href="https://github.com/veyrix-Tr/VoucherSwap/" target="_blank" rel="noopener noreferrer" className="text-gray-200 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 flex">

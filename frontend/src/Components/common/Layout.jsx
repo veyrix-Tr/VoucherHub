@@ -1,15 +1,18 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import Navbar from "./Navbar.jsx";
 import Footer from "./Footer.jsx";
+import { useRole } from "../../Context/RoleContext.jsx";
 
 export function Layout() {
   const location = useLocation();
+  const { role, setRole } = useRole();
 
-  let currentRole = "user";
-  if (location.pathname.startsWith("/admin")) currentRole = "admin";
-  else if (location.pathname.startsWith("/merchant")) currentRole = "merchant";
-  else if (location.pathname.startsWith("/user")) currentRole = "user";
+  useEffect(() => {
+    if (location.pathname.startsWith("/admin")) setRole("admin");
+    else if (location.pathname.startsWith("/merchant")) setRole("merchant");
+    else if (location.pathname.startsWith("/user")) setRole("user");
+  }, [location.pathname, setRole]);
 
   const roleConfig = {
     admin: { displayName: "Admin", gradient: "from-red-500 to-red-600" },
@@ -19,13 +22,8 @@ export function Layout() {
 
   return (
     <div>
-      <Navbar currentRole={currentRole} roleConfig={roleConfig} />
-
-      {/* Page content */}
-      <div className="mt-4">
-        <Outlet />
-      </div>
-
+      <Navbar currentRole={role} roleConfig={roleConfig} />
+      <div className="mt-4"><Outlet /></div>
       <Footer />
     </div>
   );

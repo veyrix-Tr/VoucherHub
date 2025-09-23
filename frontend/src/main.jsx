@@ -5,11 +5,14 @@ import { WalletProvider } from "./Context/WalletContext.jsx";
 
 import './index.css'
 import App from './App.jsx'
+import { RoleProvider } from "./Context/RoleContext.jsx";
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
     <WalletProvider>
-      <App />
+      <RoleProvider>
+        <App />
+      </RoleProvider>
     </WalletProvider>
   </BrowserRouter>
 )

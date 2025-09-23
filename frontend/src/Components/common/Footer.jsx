@@ -16,7 +16,7 @@ export default function Footer() {
 
   return (
     <footer className="bg-gray-900 border-t border-gray-800">
-      <div className="max-w-7xl mx-auto px-6 p-6">
+      <div className="max-w-9xl mx-auto px-6 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
 
           <div className="lg:col-span-2">
@@ -31,9 +31,9 @@ export default function Footer() {
                 </h2>
                 <div className="mt-1 flex items-baseline gap-3">
                   <span className="text-sm text-gray-400">by</span>
-                  <span className="text-[20px] font-extrabold bg-clip-text text-yellow-400  tracking-tight" style={{ fontFamily: "'Style Script', sans-serif", letterSpacing: '3px' }} >
+                  <span className="text-[20px] font-extrabold bg-clip-text text-yellow-300  tracking-tight" style={{ fontFamily: "'Style Script', sans-serif", letterSpacing: '3px' }} >
                     Veyrix-Tr
-                    <span className="text-[18px] font-[100] bg-clip-text text-yellow-400 via-pink-500 to-yellow-400 tracking-tight pl-2" style={{ fontFamily: "Bungee", letterSpacing: '-0.3px' }}>
+                    <span className="text-[18px] font-[100] bg-clip-text text-yellow-300 via-pink-500 to-yellow-400 tracking-tight pl-2" style={{ fontFamily: "Bungee", letterSpacing: '-0.3px' }}>
                       ( Chirag Goyal )
                     </span>
                   </span>
@@ -42,7 +42,7 @@ export default function Footer() {
               </div>
             </div>
 
-            <p className="text-gray-300 text-[18px] max-w-md leading-relaxed mb-4 pb-6">
+            <p className="text-gray-300 text-[18px] max-w-md leading-relaxed pb-6">
               Securely issue, receive, and redeem ERC-1155 vouchers on-chain.
               Built for decentralized commerce with enterprise-grade security.
             </p>
@@ -107,7 +107,7 @@ export default function Footer() {
       </div>
 
       <div className="border-t border-gray-800">
-        <div className="max-w-7xl mx-auto px-6 py-6">
+        <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="text-gray-400 text-sm">
               © {year} VoucherSwap Protocol. All rights reserved.
