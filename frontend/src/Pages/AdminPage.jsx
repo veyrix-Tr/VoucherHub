@@ -6,6 +6,8 @@ import VoucherABI from "../../../backend/src/abi/VoucherERC1155.json";
 import addresses from "../contracts/addresses.js";
 import { fetchVouchersByStatus } from "../utils/fetchVouchers.js";
 import VoucherCard from "../Components/common/VoucherCard.jsx";
+import Footer from "../Components/common/Footer.jsx";
+import Navbar from "../Components/common/Navbar.jsx";
 
 
 export default function AdminPage() {
@@ -19,7 +21,7 @@ export default function AdminPage() {
   const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
   const CHAIN_ID = provider?._network?.chainId || parseInt(import.meta.env.VITE_CHAIN_ID || "11155111", 10);
-  
+
   const voucherContractAddress = addresses[CHAIN_ID]?.voucherERC1155 || import.meta.env.VITE_VOUCHER_CONTRACT_ADDRESS;
 
   // every time account or chainId changes grab pending voucherstatusLoadings
@@ -91,73 +93,75 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <h2 className="text-3xl font-bold mb-6 text-gray-800">Admin — Pending Vouchers</h2>
+    <>
+      <div className="p-6 bg-gray-50 min-h-screen">
+        <h2 className="text-3xl font-bold mb-6 text-gray-800">Admin — Pending Vouchers</h2>
 
-      <div className="mb-6">
-        <button
-          onClick={() => fetchVouchersByStatus("pending", setVouchers, setLoading)}
-          disabled={loading}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400 transition"
-        >
-          {loading ? "Loading..." : "Refresh"}
-        </button>
-      </div>
-
-      {vouchers.length === 0 && !loading ? (
-        <div className="text-gray-500 text-center py-10">No pending vouchers</div>
-      ) : (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {vouchers.map((v) => (
-            <VoucherCard key={v._id} voucher={v} role="admin"
-              onApprove={(v) => {
-                if (!statusLoading[v._id]) handleApprove(v);
-              }} onReject={(v) => {
-                if (!statusLoading[v._id]) {
-                  setRejectTarget(v);
-                  setRejectText("");
-                  setShowRejectModal(true);
-                }
-              }
-              } />
-          ))}
+        <div className="mb-6">
+          <button
+            onClick={() => fetchVouchersByStatus("pending", setVouchers, setLoading)}
+            disabled={loading}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400 transition"
+          >
+            {loading ? "Loading..." : "Refresh"}
+          </button>
         </div>
-      )}
 
-      {showRejectModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-96 shadow-lg">
-            <h2 className="text-lg font-bold mb-3">Reject Voucher</h2>
-            <p className="text-sm mb-2">
-              Rejecting voucher: <strong>{rejectTarget?.voucherId}</strong>
-            </p>
-            <textarea
-              rows={4}
-              placeholder="Enter reason (optional)..."
-              value={rejectText}
-              onChange={(e) => setRejectText(e.target.value)}
-              className="w-full border rounded px-3 py-2 mb-4"
-            />
-            <div className="flex justify-end gap-2">
-              <button
-                onClick={() => {
-                  setShowRejectModal(false);
-                  setRejectTarget(null);
-                  setRejectText("");
-                }}
-                className="px-4 py-2 bg-gray-300 rounded"
-              >
-                Cancel
-              </button>
-              <button disabled={rejectTarget && statusLoading[rejectTarget._id]} 
-              onClick={handleRejectSubmit} 
-              className="px-4 py-2 bg-red-600 text-white rounded">
-                Submit
-              </button>
+        {vouchers.length === 0 && !loading ? (
+          <div className="text-gray-500 text-center py-10">No pending vouchers</div>
+        ) : (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {vouchers.map((v) => (
+              <VoucherCard key={v._id} voucher={v} role="admin"
+                onApprove={(v) => {
+                  if (!statusLoading[v._id]) handleApprove(v);
+                }} onReject={(v) => {
+                  if (!statusLoading[v._id]) {
+                    setRejectTarget(v);
+                    setRejectText("");
+                    setShowRejectModal(true);
+                  }
+                }
+                } />
+            ))}
+          </div>
+        )}
+
+        {showRejectModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 w-96 shadow-lg">
+              <h2 className="text-lg font-bold mb-3">Reject Voucher</h2>
+              <p className="text-sm mb-2">
+                Rejecting voucher: <strong>{rejectTarget?.voucherId}</strong>
+              </p>
+              <textarea
+                rows={4}
+                placeholder="Enter reason (optional)..."
+                value={rejectText}
+                onChange={(e) => setRejectText(e.target.value)}
+                className="w-full border rounded px-3 py-2 mb-4"
+              />
+              <div className="flex justify-end gap-2">
+                <button
+                  onClick={() => {
+                    setShowRejectModal(false);
+                    setRejectTarget(null);
+                    setRejectText("");
+                  }}
+                  className="px-4 py-2 bg-gray-300 rounded"
+                >
+                  Cancel
+                </button>
+                <button disabled={rejectTarget && statusLoading[rejectTarget._id]}
+                  onClick={handleRejectSubmit}
+                  className="px-4 py-2 bg-red-600 text-white rounded">
+                  Submit
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </>
   );
 }

@@ -2,39 +2,47 @@ import React from "react";
 import discordIcon from "../../public/images/Discord-icon.png"
 import githubIcon from "../../public/images/github-icon.png"
 import twitterIcon from "../../public/images/twitter-icon.png"
+import { useLocation } from "react-router-dom";
 
-export default function Footer({ currentRole = 'user' }) {
+export default function Footer() {
+
+  const location = useLocation();
+  let currentRole = "user";
+  if (location.pathname.startsWith("/admin")) currentRole = "admin";
+  else if (location.pathname.startsWith("/merchant")) currentRole = "merchant";
+  else if (location.pathname.startsWith("/user")) currentRole = "user";
+
   const year = new Date().getFullYear();
 
   return (
     <footer className="bg-gray-900 border-t border-gray-800">
-      <div className="max-w-7xl mx-auto px-6 pt-12 pb-6">
+      <div className="max-w-7xl mx-auto px-6 p-6">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
 
           <div className="lg:col-span-2">
-            <div className="flex items-center gap-4 mb-6">
+            <div className="flex items-center gap-4 mb-5">
               <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center shadow-lg">
                 {/* logo */}
                 <img src="" alt="VoucherSwap logo" className="w-8 h-8 object-contain filter brightness-0 invert" />
               </div>
               <div>
-                <h2 className="text-[35px] font-extrabold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                <h2 className="text-[33px] font-extrabold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
                   VoucherSwap
                 </h2>
                 <div className="mt-1 flex items-baseline gap-3">
                   <span className="text-sm text-gray-400">by</span>
-                  <span className="text-lg font-extrabold bg-clip-text text-yellow-400  tracking-tight" style={{ fontFamily: "'Style Script', sans-serif", letterSpacing: '3px' }} >
+                  <span className="text-[20px] font-extrabold bg-clip-text text-yellow-400  tracking-tight" style={{ fontFamily: "'Style Script', sans-serif", letterSpacing: '3px' }} >
                     Veyrix-Tr
-                    <span className="text-[20px] font-[100] bg-clip-text text-yellow-400 via-pink-500 to-yellow-400 tracking-tight pl-2" style={{ fontFamily: "Bungee", letterSpacing: '-0.3px' }}>
+                    <span className="text-[18px] font-[100] bg-clip-text text-yellow-400 via-pink-500 to-yellow-400 tracking-tight pl-2" style={{ fontFamily: "Bungee", letterSpacing: '-0.3px' }}>
                       ( Chirag Goyal )
                     </span>
                   </span>
                 </div>
-                <p className="text-gray-400 text-sm">Trustless voucher exchange protocol</p>
+                <p className="text-gray-400 text-sm">A trustless voucher exchange protocol</p>
               </div>
             </div>
 
-            <p className="text-gray-300 text-[19px] max-w-md leading-relaxed mb-6 pb-6">
+            <p className="text-gray-300 text-[18px] max-w-md leading-relaxed mb-4 pb-6">
               Securely issue, receive, and redeem ERC-1155 vouchers on-chain.
               Built for decentralized commerce with enterprise-grade security.
             </p>

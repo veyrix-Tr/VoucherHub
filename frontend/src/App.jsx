@@ -15,6 +15,7 @@ export default function App() {
   return (
     <>
       <Routes>
+        
         <Route path="/" element={<ConnectPage />} />
         <Route path="/merchant" element={<MerchantPage />} />
         <Route path="/admin" element={<AdminPage />} />
@@ -24,7 +25,6 @@ export default function App() {
         <Route path="/user" element={<UserPage />} />
         <Route path="/navbar" element={<Navbar />} />
         <Route path="/footer" element={<Footer />} />
-
       </Routes>
       <Toaster position="top-right" richColors />
     </>

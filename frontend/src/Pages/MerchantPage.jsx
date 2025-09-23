@@ -4,6 +4,8 @@ import addresses from "../contracts/addresses.js";
 import MerchantVoucherForm from "../Components/merchant/MerchantVoucherForm.jsx";
 import { fetchVouchersByOwner } from "../utils/fetchVouchers.js";
 import VoucherCard from "../Components/common/VoucherCard.jsx";
+import Navbar from "../Components/common/Navbar.jsx";
+import Footer from "../Components/common/Footer.jsx";
 
 
 export default function MerchantPage() {
@@ -54,20 +56,19 @@ export default function MerchantPage() {
 	);
 
 	return (
-		<div className="p-6 bg-gray-50 min-h-screen">
-			<h1 className="text-2xl font-bold mb-6">
-				Merchant Dashboard ({account?.slice(0, 6)}...{account?.slice(-4)})
-			</h1>
+		<>
+			<div className="p-6 bg-gray-50 min-h-screen">
 
-			<div className="mb-8">
-				<h2 className="text-xl font-medium mb-2">Issue New Voucher</h2>
-				<MerchantVoucherForm signer={signer} contractAddress={addresses[chainId]?.voucherERC1155} />
+				<div className="mb-8">
+					<h2 className="text-xl font-medium mb-2">Issue New Voucher</h2>
+					<MerchantVoucherForm signer={signer} contractAddress={addresses[chainId]?.voucherERC1155} />
+				</div>
+
+				{renderSection("Approved", approvedVouchers)}
+				{renderSection("Pending", pendingVouchers)}
+				{renderSection("Rejected", rejectedVouchers)}
+				{renderSection("Redeemed", redeemedVouchers)}
 			</div>
-
-			{renderSection("Approved", approvedVouchers)}
-			{renderSection("Pending", pendingVouchers)}
-			{renderSection("Rejected", rejectedVouchers)}
-			{renderSection("Redeemed", redeemedVouchers)}
-		</div>
+		</>
 	);
 }
