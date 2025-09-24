@@ -15,8 +15,8 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-900 border-t border-gray-800">
-      <div className="max-w-9xl mx-auto pr-6 pl-15 py-6">
+    <footer className="bg-black border-t border-gray-600">
+      <div className="max-w-9xl mx-auto pr-6 pl-15 p-8 ">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           <div className="lg:col-span-2">
             <div className="flex items-center gap-4 mb-5">

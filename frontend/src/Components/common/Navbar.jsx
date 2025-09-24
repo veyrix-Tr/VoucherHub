@@ -27,13 +27,13 @@ const Navbar = ({ currentRole, roleConfig }) => {
             {/* Placeholder for logo - replace with your image */}
             <img src={""} alt="" className='w-7 absolute' />
           </div>
-          <NavLink to={`/${currentRole}`} className="flex items-center gap-2 brand text-[42px]">
+          <NavLink to={`/${currentRole}`} className="flex items-center gap-2 brand text-[45px]">
             VoucherSwap
           </NavLink>
         </div>
 
         <div className="flex items-center space-x-9">
-          <NavLink to={`/${currentRole}`} className="relative px-3 py-2 rounded-md text-[20px] font-medium transition-colors duration-200 text-gray-300 hover:text-white">
+          <NavLink to={`/${currentRole}`} className="relative px-3 py-2 rounded-md text-[23px] font-medium transition-colors duration-200 text-gray-300 hover:text-white">
             {({ isActive }) => (
               <>
                 <span className={isActive ? "text-white font-bold" : ""}>Home</span>
@@ -44,7 +44,7 @@ const Navbar = ({ currentRole, roleConfig }) => {
             )}
           </NavLink>
 
-          <NavLink to="/marketplace" className="relative px-3 py-2 rounded-md text-[20px] font-medium transition-colors duration-200 text-gray-300 hover:text-white">
+          <NavLink to="/marketplace" className="relative px-3 py-2 rounded-md text-[23px] font-medium transition-colors duration-200 text-gray-300 hover:text-white">
             {({ isActive }) => (
               <>
                 <span className={isActive ? "text-white font-bold" : ""}>Marketplace</span>
@@ -57,7 +57,7 @@ const Navbar = ({ currentRole, roleConfig }) => {
 
           <a href="https://github.com/veyrix-Tr/VoucherSwap/" target="_blank" rel="noopener noreferrer" className="text-gray-200 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 flex">
             <img src={githubIcon} alt="" className='w-7 absolute' />
-            <span className='relative pt-1 pl-9 text-[19px]'>GitHub Repo</span>
+            <span className='relative pt-1 pl-9 text-[21px]'>GitHub Repo</span>
           </a>
         </div>
 
@@ -74,11 +74,11 @@ const Navbar = ({ currentRole, roleConfig }) => {
               className="flex items-center space-x-2 bg-gradient-to-r from-blue-400 to-green-500 text-yellow-100 hover:opacity-90 px-4 py-2 rounded-lg shadow-md transition-all duration-200 cursor-pointer"
             >
               {isWalletConnected ? (
-                <span className="text-[18px] font-bold">
+                <span className="text-[22px] font-bold">
                   {`${account.substring(0, 6)}...${account.substring(account.length - 4)}`}
                 </span>
               ) : (
-                <span className="text-[18px] font-bold">Connect Wallet</span>
+                <span className="text-[22px] font-bold">Connect Wallet</span>
               )}
             </button>
 

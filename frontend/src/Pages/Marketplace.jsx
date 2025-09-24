@@ -95,8 +95,8 @@ export default function Marketplace() {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 
-      dark:from-slate-900 dark:via-slate-950 dark:to-slate-900 transition-colors">
-      <div className="max-w-9xl mx-auto px-6 lg:px-15 py-12">
+      dark:from-slate-900 dark:via-slate-900 dark:to-slate-900 transition-colors">
+      <div className="max-w-9xl mx-auto px-6 lg:px-15 pt-12 pb-25">
         <div className="flex items-center gap-2 mb-8">
           <Link to={`/${role}`} className="inline-flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-white transition-colors group" >
             <ArrowLeftIcon className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
@@ -117,7 +117,7 @@ export default function Marketplace() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4">
-            <div className="relative flex-1 min-w-[280px]">
+            <div className="relative flex-1 min-w-[400px]">
               <MagnifyingGlassIcon className="absolute inset-y-0 left-3 my-auto h-5 w-5 text-slate-400" />
               <input type="text" value={query} onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search vouchers..."
