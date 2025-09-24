@@ -152,7 +152,7 @@ export default function VoucherCard({
       </div>
 
       {showModal && (
-        <VoucherModal voucher={voucher} role={role} userBalance={userBalance} onClose={() => setShowModal(false)} />
+        <VoucherModal voucher={voucher} role={role} userBalance={userBalance} onClose={() => setShowModal(false)} expiryDate={expiryDate} isExpired={isExpired} daysUntilExpiry={daysUntilExpiry} getStatusBadge={getStatusBadge} status={status} />
       )}
     </>
   );
