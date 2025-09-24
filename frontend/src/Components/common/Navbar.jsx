@@ -13,7 +13,7 @@ const Navbar = ({ currentRole, roleConfig }) => {
     navigator.clipboard.writeText(account);
     setIsDropdownOpen(false);
     toast.success("Address copied to clipboard !", {
-      className: "text-[14px] font-semibold",
+      className: "text-[20px] font-[450]",
       autoClose: 2000,
       pauseOnHover: false,
     });
@@ -62,15 +62,15 @@ const Navbar = ({ currentRole, roleConfig }) => {
         </div>
 
         <div className="flex items-center space-x-16">
-          <div className={`flex items-center px-3 py-1 rounded-full text-yellow-100 bg-gradient-to-r ${roleConfig[currentRole].gradient} shadow-md flex items-center space-x-2`}>
-            <span className={`text-[20px] font-bold tracking-wide px-2 pt-1`}>
+          <div className={`flex items-center px-3 py-1 rounded-full text-yellow-100 bg-gradient-to-r ${roleConfig[currentRole].gradient || "from-green-400 to-indigo-800"} shadow-md flex items-center space-x-2`}>
+            <span className={`text-[20px] font-bold tracking-wide px-2 py-1`}>
               {roleConfig[currentRole].displayName}
             </span>
           </div>
 
           <div className="relative">
             <button
-              onClick={() => isWalletConnected ? setIsDropdownOpen(!isDropdownOpen) : connectWallet()}
+              onClick={() => isWalletConnected ? setIsDropdownOpen(!isDropdownOpen) : connectWallet(currentRole)}
               className="flex items-center space-x-2 bg-gradient-to-r from-blue-400 to-green-500 text-yellow-100 hover:opacity-90 px-4 py-2 rounded-lg shadow-md transition-all duration-200 cursor-pointer"
             >
               {isWalletConnected ? (

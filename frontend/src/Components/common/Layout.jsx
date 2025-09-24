@@ -23,7 +23,7 @@ export function Layout() {
   return (
     <div>
       <Navbar currentRole={role} roleConfig={roleConfig} />
-      <div className="mt-4"><Outlet /></div>
+      <div><Outlet /></div>
       <Footer />
     </div>
   );

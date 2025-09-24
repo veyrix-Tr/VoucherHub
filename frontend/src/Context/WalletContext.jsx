@@ -14,7 +14,7 @@ export const WalletProvider = ({ children }) => {
 	const [provider, setProvider] = useState(null);
 	const navigate = useNavigate();
 
-	const connectWallet = async () => {
+	const connectWallet = async (role) => {
 		/** 
 		* Safely check if running in browser and MetaMask (window.ethereum) is available
 		* we are not using !window because in Node.js or any non-browser environment, window does not exist so would say 
@@ -43,7 +43,7 @@ export const WalletProvider = ({ children }) => {
 					duration: 1500,
 					showProgressBar: true
 				})
-				navigate("/user")
+				navigate(`/${role}`)
 			} catch (error) {
 				toast.error("Failed to connect wallet")
 			}

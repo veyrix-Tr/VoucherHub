@@ -1,8 +1,10 @@
 import React from "react";
 import { useWallet } from "../Context/WalletContext.jsx";
 import metamaskIcon from "../public/images/metamask-icon.png";
+import { useRole } from "../Context/RoleContext.jsx";
 
 export default function ConnectPage() {
+  const {role} = useRole();
   const { account, connectWallet } = useWallet();
 
   if (account) return null;
@@ -71,7 +73,7 @@ export default function ConnectPage() {
         </p>
 
         <button
-          onClick={connectWallet}
+          onClick={()=>connectWallet(role)}
           style={{
             padding: "14px 24px",
             width: "100%",

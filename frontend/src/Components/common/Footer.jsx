@@ -16,9 +16,8 @@ export default function Footer() {
 
   return (
     <footer className="bg-gray-900 border-t border-gray-800">
-      <div className="max-w-9xl mx-auto px-6 py-6">
+      <div className="max-w-9xl mx-auto pr-6 pl-15 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-
           <div className="lg:col-span-2">
             <div className="flex items-center gap-4 mb-5">
               <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center shadow-lg">

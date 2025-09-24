@@ -1,5 +1,6 @@
 import axios from "axios";
 import { createGatewayUrl } from "./ipfs.js";
+import toast from "react-hot-toast";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
@@ -31,7 +32,9 @@ export const fetchVouchersByStatus = async (status, setVouchers, setLoading) => 
 
   } catch (err) {
     console.error("Failed to load vouchers", err);
+    toast.error("Failed to load vouchers");
     setVouchers([]);
+    
   } finally {
     setLoading(false);
   }
