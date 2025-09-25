@@ -102,7 +102,7 @@ export default function Marketplace() {
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8">
           <div>
             <h1 className="text-4xl lg:text-5xl font-extrabold bg-gradient-to-r 
-              from-blue-600 via-purple-600 to-pink-500 bg-clip-text text-transparent">
+              from-blue-600 100 via-pink-400 to-pink-800 bg-clip-text text-transparent">
               Marketplace
             </h1>
             <p className="mt-3 text-lg text-slate-600 dark:text-slate-300 max-w-2xl">
@@ -113,7 +113,7 @@ export default function Marketplace() {
 
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1 min-w-[400px]">
-              <MagnifyingGlassIcon className="absolute inset-y-0 left-3 my-auto h-5 w-5 text-slate-400" />
+              <MagnifyingGlassIcon className="absolute inset-y-0 left-3 my-auto h-5 w-5 text-slate-400 z-1" />
               <input type="text" value={query} onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search vouchers..."
                 className="w-full pl-10 pr-10 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/90 dark:bg-slate-900/80 backdrop-blur-sm text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-sm transition-all"

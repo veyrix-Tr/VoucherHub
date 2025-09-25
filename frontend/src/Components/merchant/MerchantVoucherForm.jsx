@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ethers, utils, BigNumber } from "ethers";
+import { ethers, BigNumber } from "ethers";
 import { uploadMetadata } from "../../utils/ipfs.js";
 import { buildVoucherTypedData } from "../../utils/eip712.js";
 import axios from "axios";
@@ -32,13 +32,12 @@ export default function MerchantVoucherForm({ signer, contractAddress }) {
 
 		if (name === "image" && files && files[0]) {
 			const file = files[0];
-			setForm(prev => ({ ...prev, [name]: file }));
+			setForm((prev) => ({ ...prev, [name]: file }));
 			const reader = new FileReader();
 			reader.onload = (e) => setImagePreview(e.target.result);
 			reader.readAsDataURL(file);
-
 		} else {
-			setForm(prev => ({ ...prev, [name]: value }));
+			setForm((prev) => ({ ...prev, [name]: value }));
 		}
 	};
 
@@ -77,7 +76,7 @@ export default function MerchantVoucherForm({ signer, contractAddress }) {
 			const uidHex = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(`${merchant}:${form.nonce}`));
 			const voucherId = BigNumber.from(uidHex);
 
-			const expiry = BigNumber.from(Math.floor(new Date(form.expiry).getTime() / 1000))
+			const expiry = BigNumber.from(Math.floor(new Date(form.expiry).getTime() / 1000));
 			const price = BigNumber.from(ethers.utils.parseUnits(String(form.price || "0"), 18));
 
 			const voucherData = {
@@ -88,7 +87,7 @@ export default function MerchantVoucherForm({ signer, contractAddress }) {
 				metadataHash,
 				metadataCID,
 				price: price.toString(),
-				nonce: BigNumber.from(form.nonce || 1).toString()
+				nonce: BigNumber.from(form.nonce || 1).toString(),
 			};
 
 			const network = await signer.provider.getNetwork();
@@ -101,7 +100,6 @@ export default function MerchantVoucherForm({ signer, contractAddress }) {
 				verifyingContract: contractAddress,
 			};
 			const typed = buildVoucherTypedData(domain, voucherData);
-
 			const signature = await signer._signTypedData(typed.domain, typed.types, typed.message);
 
 			await axios.post(`${backendUrl}/api/vouchers`, {
@@ -122,7 +120,6 @@ export default function MerchantVoucherForm({ signer, contractAddress }) {
 				nonce: Date.now().toString(),
 			});
 			setImagePreview(null);
-
 		} catch (err) {
 			console.error("Error creating voucher:", err);
 			toast.error(err.message || "Failed to create voucher");
@@ -136,48 +133,70 @@ export default function MerchantVoucherForm({ signer, contractAddress }) {
 			<div className="grid md:grid-cols-2 gap-6">
 				<div className="space-y-4">
 					<div>
-						<label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+						<label className="block text-sm font-medium text-slate-900 dark:text-white mb-2">
 							Voucher Title *
 						</label>
-						<input	type="text"	name="title"	placeholder="e.g., 20% Off Coffee Discount"
-							value={form.title}	onChange={handleChange}	required
-							className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+						<input
+							type="text"
+							name="title"
+							placeholder="e.g., 20% Off Coffee Discount"
+							value={form.title}
+							onChange={handleChange}
+							required
+							className="w-full px-4 py-3 border border-slate-300 dark:border-slate-700 rounded-2xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
 						/>
 					</div>
 
 					<div>
-						<label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+						<label className="block text-sm font-medium text-slate-900 dark:text-white mb-2">
 							Description *
 						</label>
-						<textarea name="description" placeholder="Describe what this voucher offers..." 
-							value={form.description} onChange={handleChange} required rows={4}
-							className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+						<textarea
+							name="description"
+							placeholder="Describe what this voucher offers..."
+							value={form.description}
+							onChange={handleChange}
+							required
+							rows={4}
+							className="w-full px-4 py-3 border border-slate-300 dark:border-slate-700 rounded-2xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none transition-all"
 						/>
 					</div>
 
 					<div>
-						<label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+						<label className="block text-sm font-medium text-slate-900 dark:text-white mb-2">
 							Max Supply *
 						</label>
-						<input type="number" name="maxMint" placeholder="Maximum number of vouchers" 
-							value={form.maxMint} onChange={handleChange} required min="1"
-							className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+						<input
+							type="number"
+							name="maxMint"
+							placeholder="Maximum number of vouchers"
+							value={form.maxMint}
+							onChange={handleChange}
+							required
+							min="1"
+							className="w-full px-4 py-3 border border-slate-300 dark:border-slate-700 rounded-2xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
 						/>
 					</div>
 				</div>
 
 				<div className="space-y-4">
 					<div>
-						<label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+						<label className="block text-sm font-medium text-slate-900 dark:text-white mb-2">
 							Expiry Date & Time *
 						</label>
-						<input type="datetime-local" name="expiry" value={form.expiry} onChange={handleChange} 	min={getUpcomingDate(1)} required
-							className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+						<input
+							type="datetime-local"
+							name="expiry"
+							value={form.expiry}
+							onChange={handleChange}
+							required
+							min={getUpcomingDate(7)}
+							className="w-full px-4 py-3 border border-slate-300 dark:border-slate-700 rounded-2xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all colorscheme-white"
 						/>
 					</div>
 
 					<div>
-						<label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+						<label className="block text-sm font-medium text-slate-900 dark:text-white mb-2">
 							Price (ETH)
 						</label>
 						<input
@@ -188,12 +207,12 @@ export default function MerchantVoucherForm({ signer, contractAddress }) {
 							value={form.price}
 							onChange={handleChange}
 							min="0"
-							className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+							className="w-full px-4 py-3 border border-slate-300 dark:border-slate-700 rounded-2xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
 						/>
 					</div>
 
 					<div>
-						<label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+						<label className="block text-sm font-medium text-slate-900 dark:text-white mb-2">
 							Nonce *
 						</label>
 						<input
@@ -203,25 +222,23 @@ export default function MerchantVoucherForm({ signer, contractAddress }) {
 							value={form.nonce}
 							onChange={handleChange}
 							required
-							className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+							className="w-full px-4 py-3 border border-slate-300 dark:border-slate-700 rounded-2xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
 						/>
 					</div>
 
 					<div>
-						<label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+						<label className="block text-sm font-medium text-slate-900 dark:text-white mb-2">
 							Voucher Image
 						</label>
-						<div className="relative border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg p-4 text-center">
+						<div className="relative border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-2xl p-4 text-center transition-all hover:border-purple-500">
 							{imagePreview ? (
 								<div className="space-y-2">
-									<img src={imagePreview} alt="Preview" className="w-32 h-32 object-cover rounded-lg mx-auto" />
-									<button
-										type="button"
-										onClick={() => {
-											setImagePreview(null);
-											setForm(prev => ({ ...prev, image: null }));
-										}}
-										className="text-sm text-red-600 hover:text-red-800"
+									<img src={imagePreview} alt="Preview" className="w-32 h-32 object-cover rounded-2xl mx-auto" />
+									<button type="button" onClick={() => {
+										setImagePreview(null);
+										setForm((prev) => ({ ...prev, image: null }));
+									}}
+										className="text-sm text-red-600 hover:text-red-800 bg-red-300/10 px-3 py-0.5 rounded-md cursor-pointer"
 									>
 										Remove Image
 									</button>
@@ -244,10 +261,8 @@ export default function MerchantVoucherForm({ signer, contractAddress }) {
 				</div>
 			</div>
 
-			<button
-				type="submit"
-				disabled={loading}
-				className="w-full px-4 py-3 bg-gradient-to-r from-emerald-500 to-green-500 text-white rounded-lg hover:from-emerald-600 hover:to-green-600 disabled:from-slate-400 disabled:to-slate-400 transition-all font-medium shadow-sm flex items-center justify-center gap-2"
+			<button type="submit" disabled={loading}
+				className="w-full px-4 py-3 bg-gradient-to-r from-emerald-500 to-green-500 text-white rounded-2xl hover:from-emerald-600 hover:to-green-600 disabled:from-slate-400 disabled:to-slate-400 transition-all font-medium shadow-sm flex items-center justify-center gap-2"
 			>
 				<DocumentPlusIcon className="w-5 h-5" />
 				{loading ? "Creating Voucher..." : "Create & Sign Voucher"}

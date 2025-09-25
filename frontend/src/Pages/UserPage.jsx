@@ -12,7 +12,7 @@ export default function UserPage() {
       <div className="max-w-9xl mx-auto px-6 lg:px-15 pt-12 pb-24">
         <div className="mb-12">
           <h1 className="text-4xl lg:text-5xl font-extrabold bg-gradient-to-r 
-            from-blue-600 via-purple-600 to-pink-500 bg-clip-text text-transparent">
+            from-blue-600 100 via-pink-400 to-pink-800 bg-clip-text text-transparent">
             User Dashboard
           </h1>
           <p className="mt-3 text-lg text-slate-600 dark:text-slate-300 max-w-2xl">

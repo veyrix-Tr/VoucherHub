@@ -18,3 +18,7 @@
   transform: scale(1.14);
   text-shadow: 0px 4px 1px rgba(255, 79, 79, 0.6);
 }
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(2);
+}
