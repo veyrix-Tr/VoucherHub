@@ -34,7 +34,7 @@ export const fetchVouchersByStatus = async (status, setVouchers, setLoading) => 
     console.error("Failed to load vouchers", err);
     toast.error("Failed to load vouchers");
     setVouchers([]);
-    
+
   } finally {
     setLoading(false);
   }
@@ -49,6 +49,7 @@ export const fetchVouchersByOwner = async (owner, setVouchers, setLoading) => {
 
   } catch (err) {
     console.error("Failed to load owner vouchers", err);
+    toast.error("Failed to load vouchers");
     setVouchers([]);
   } finally {
     setLoading(false);

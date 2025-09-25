@@ -5,12 +5,7 @@ import { useRole } from "../Context/RoleContext.jsx";
 import { fetchVouchersByStatus } from "../utils/fetchVouchers.js";
 import VoucherCard from "../Components/common/VoucherCard.jsx";
 import { toast } from "react-hot-toast";
-import {
-  MagnifyingGlassIcon,
-  ArrowPathIcon,
-  XMarkIcon,
-  ArrowLeftIcon,
-} from "@heroicons/react/24/solid";
+import { MagnifyingGlassIcon, ArrowPathIcon, XMarkIcon, ArrowLeftIcon } from "@heroicons/react/24/solid";
 
 export default function Marketplace() {
   const { account } = useWallet();

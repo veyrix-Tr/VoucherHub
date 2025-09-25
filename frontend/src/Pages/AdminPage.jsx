@@ -6,8 +6,6 @@ import VoucherABI from "../../../backend/src/abi/VoucherERC1155.json";
 import addresses from "../contracts/addresses.js";
 import { fetchVouchersByStatus } from "../utils/fetchVouchers.js";
 import VoucherCard from "../Components/common/VoucherCard.jsx";
-import Footer from "../Components/common/Footer.jsx";
-import Navbar from "../Components/common/Navbar.jsx";
 
 
 export default function AdminPage() {

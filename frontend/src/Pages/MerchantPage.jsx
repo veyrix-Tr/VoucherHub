@@ -4,9 +4,6 @@ import addresses from "../contracts/addresses.js";
 import MerchantVoucherForm from "../Components/merchant/MerchantVoucherForm.jsx";
 import { fetchVouchersByOwner } from "../utils/fetchVouchers.js";
 import VoucherCard from "../Components/common/VoucherCard.jsx";
-import Navbar from "../Components/common/Navbar.jsx";
-import Footer from "../Components/common/Footer.jsx";
-
 
 export default function MerchantPage() {
 	const { account, signer } = useWallet();
