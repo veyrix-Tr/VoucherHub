@@ -3,39 +3,24 @@ import { ethers, utils, BigNumber } from "ethers";
 import { uploadMetadata } from "../../utils/ipfs.js";
 import { buildVoucherTypedData } from "../../utils/eip712.js";
 import axios from "axios";
+import { DocumentPlusIcon, PhotoIcon } from "@heroicons/react/24/outline";
+import { toast } from "react-hot-toast";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-/**
-Props:
-	- signer: ethers Signer (from WalletContext)
-	- contractAddress: address of VoucherERC1155 (from addresses.js to use in domain for signature)
-
-This component:
-	1) collects voucher inputs
-	2) uploads metadata to IPFS (nft.storage) and get metadataCID
-	3) computes metadataHash
-	4) constructs VoucherData matching Solidity struct and define domain
-	5) use buildVoucherTypedData to build fully structured typed data
-	5) asks merchant wallet to sign EIP-712 typed data from domain, types and voucherData
-	6) logs (voucher, signature) — ready to send to backend
-
-*/
 export default function MerchantVoucherForm({ signer, contractAddress }) {
-
-	//the fields form has
 	const [form, setForm] = useState({
 		title: "",
 		description: "",
-		maxMint: "1",
+		maxMint: "100",
 		expiry: "",
 		price: "0",
 		image: null,
-		nonce: "",
+		nonce: Date.now().toString(),
 	});
 	const [loading, setLoading] = useState(false);
+	const [imagePreview, setImagePreview] = useState(null);
 
-	// give a upcoming date from now to use in expiry
 	const getUpcomingDate = (days) => {
 		const date = new Date();
 		date.setDate(date.getDate() + days);
@@ -44,23 +29,34 @@ export default function MerchantVoucherForm({ signer, contractAddress }) {
 
 	const handleChange = (e) => {
 		const { name, value, files } = e.target;
-		setForm((prev) => ({ ...prev, [name]: files ? files[0] : value }));
+
+		if (name === "image" && files && files[0]) {
+			const file = files[0];
+			setForm(prev => ({ ...prev, [name]: file }));
+			const reader = new FileReader();
+			reader.onload = (e) => setImagePreview(e.target.result);
+			reader.readAsDataURL(file);
+
+		} else {
+			setForm(prev => ({ ...prev, [name]: value }));
+		}
 	};
+
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		if (!signer) {
-			alert("Connect your wallet first.");
-			return;
 
+		if (!signer) {
+			toast.error("Please connect your wallet first");
+			return;
 		} else if (new Date(form.expiry).getTime() <= Date.now()) {
-			alert("Expiry must be in the future.");
+			toast.error("Expiry must be in the future");
 			return;
 		}
+
 		setLoading(true);
 		try {
 			const merchant = await signer.getAddress();
-			// const merchant = ethers.getAddress(merchantAddress);
-			// metadata from the form filled by merchant
+
 			const metadata = {
 				name: form.title,
 				description: form.description,
@@ -75,11 +71,9 @@ export default function MerchantVoucherForm({ signer, contractAddress }) {
 			};
 
 			const metadataCID = await uploadMetadata(metadata, form.image);
-
 			const metadataString = JSON.stringify(metadata);
 			const metadataHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(metadataString));
 
-			// Compute a unique voucherId (utils.keccak256(merchant:nonce) -> uint256)
 			const uidHex = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(`${merchant}:${form.nonce}`));
 			const voucherId = BigNumber.from(uidHex);
 
@@ -108,106 +102,156 @@ export default function MerchantVoucherForm({ signer, contractAddress }) {
 			};
 			const typed = buildVoucherTypedData(domain, voucherData);
 
-			// A 65-byte sequence, with r and s occupying the first 64 bytes (32 each) and v the final byte
 			const signature = await signer._signTypedData(typed.domain, typed.types, typed.message);
 
-			const resps = await axios.post(`${backendUrl}/api/vouchers`, {
+			await axios.post(`${backendUrl}/api/vouchers`, {
 				voucher: voucherData,
 				signature,
 				chainId: CHAIN_ID,
 			});
-			console.log("Backend response:", resps.data);
 
+			toast.success("Voucher created successfully!");
+
+			setForm({
+				title: "",
+				description: "",
+				maxMint: "100",
+				expiry: "",
+				price: "0",
+				image: null,
+				nonce: Date.now().toString(),
+			});
+			setImagePreview(null);
 
 		} catch (err) {
 			console.error("Error creating voucher:", err);
-			alert("Error: " + err.message);
-
+			toast.error(err.message || "Failed to create voucher");
 		} finally {
 			setLoading(false);
 		}
 	};
 
 	return (
-		<form onSubmit={handleSubmit} className="p-4 border rounded-lg flex flex-col gap-3">
-			{/* Title */}
-			<input
-				type="text"
-				name="title"
-				placeholder="Voucher Title"
-				value={form.title}
-				onChange={handleChange}
-				required
-				className="w-full border px-3 py-2 rounded"
-			/>
+		<form onSubmit={handleSubmit} className="space-y-6">
+			<div className="grid md:grid-cols-2 gap-6">
+				<div className="space-y-4">
+					<div>
+						<label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+							Voucher Title *
+						</label>
+						<input	type="text"	name="title"	placeholder="e.g., 20% Off Coffee Discount"
+							value={form.title}	onChange={handleChange}	required
+							className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+						/>
+					</div>
 
-			{/* Description */}
-			<textarea
-				name="description"
-				placeholder="Description"
-				value={form.description}
-				onChange={handleChange}
-				required
-				className="w-full border px-3 py-2 rounded"
-			/>
+					<div>
+						<label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+							Description *
+						</label>
+						<textarea name="description" placeholder="Describe what this voucher offers..." 
+							value={form.description} onChange={handleChange} required rows={4}
+							className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+						/>
+					</div>
 
-			{/* Max Mint */}
-			<input
-				type="number"
-				name="maxMint"
-				placeholder="Max supply (maxMint)"
-				value={form.maxMint}
-				onChange={handleChange}
-				required
-				className="w-full border px-3 py-2 rounded"
-			/>
+					<div>
+						<label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+							Max Supply *
+						</label>
+						<input type="number" name="maxMint" placeholder="Maximum number of vouchers" 
+							value={form.maxMint} onChange={handleChange} required min="1"
+							className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+						/>
+					</div>
+				</div>
 
-			{/* Expiry (datetime-local gives good UX) */}
-			<label className="text-sm text-gray-600">Expiry (date & time)</label>
-			<input
-				type="datetime-local"
-				name="expiry"
-				value={form.expiry}
-				onChange={handleChange}
-				required
-				min={getUpcomingDate(3)}
-				className="w-full border px-3 py-2 rounded"
-			/>
+				<div className="space-y-4">
+					<div>
+						<label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+							Expiry Date & Time *
+						</label>
+						<input type="datetime-local" name="expiry" value={form.expiry} onChange={handleChange} 	min={getUpcomingDate(1)} required
+							className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+						/>
+					</div>
 
-			{/* Price in ETH (human-friendly). Will be converted to wei */}
-			<input
-				type="number"
-				step="any"
-				name="price"
-				placeholder="Price (in ETH, optional)"
-				value={form.price}
-				onChange={handleChange}
-				className="w-full border px-3 py-2 rounded"
-			/>
+					<div>
+						<label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+							Price (ETH)
+						</label>
+						<input
+							type="number"
+							step="any"
+							name="price"
+							placeholder="0.00"
+							value={form.price}
+							onChange={handleChange}
+							min="0"
+							className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+						/>
+					</div>
 
-			{/* Nonce */}
-			<input
-				type="number"
-				name="nonce"
-				placeholder="Nonce (unique per merchant)"
-				value={form.nonce}
-				onChange={handleChange}
-				required
-				className="w-full border px-3 py-2 rounded"
-			/>
+					<div>
+						<label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+							Nonce *
+						</label>
+						<input
+							type="number"
+							name="nonce"
+							placeholder="Unique identifier"
+							value={form.nonce}
+							onChange={handleChange}
+							required
+							className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+						/>
+					</div>
 
-			{/* Image */}
-			<input
-				type="file"
-				name="image"
-				accept="image/*"
-				onChange={handleChange}
-				className="w-full"
-			/>
+					<div>
+						<label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+							Voucher Image
+						</label>
+						<div className="relative border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg p-4 text-center">
+							{imagePreview ? (
+								<div className="space-y-2">
+									<img src={imagePreview} alt="Preview" className="w-32 h-32 object-cover rounded-lg mx-auto" />
+									<button
+										type="button"
+										onClick={() => {
+											setImagePreview(null);
+											setForm(prev => ({ ...prev, image: null }));
+										}}
+										className="text-sm text-red-600 hover:text-red-800"
+									>
+										Remove Image
+									</button>
+								</div>
+							) : (
+								<div className="space-y-2">
+									<PhotoIcon className="w-8 h-8 text-slate-400 mx-auto" />
+									<p className="text-sm text-slate-500">Click to upload an image</p>
+									<input
+										type="file"
+										name="image"
+										accept="image/*"
+										onChange={handleChange}
+										className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+									/>
+								</div>
+							)}
+						</div>
+					</div>
+				</div>
+			</div>
 
-			<button type="submit" disabled={loading} className="bg-blue-600 text-white p-2 rounded">
-				{loading ? "Creating..." : "Create & Sign Voucher"}
+			<button
+				type="submit"
+				disabled={loading}
+				className="w-full px-4 py-3 bg-gradient-to-r from-emerald-500 to-green-500 text-white rounded-lg hover:from-emerald-600 hover:to-green-600 disabled:from-slate-400 disabled:to-slate-400 transition-all font-medium shadow-sm flex items-center justify-center gap-2"
+			>
+				<DocumentPlusIcon className="w-5 h-5" />
+				{loading ? "Creating Voucher..." : "Create & Sign Voucher"}
 			</button>
 		</form>
-	)
-};
+	);
+}
