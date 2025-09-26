@@ -51,7 +51,7 @@ export default function RequestMerchantForm() {
   };
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+    <div className="bg-white dark:bg-slate-800/70 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
       <div className="p-6 border-b border-slate-200 dark:border-slate-700">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30">
@@ -72,7 +72,7 @@ export default function RequestMerchantForm() {
             Business Name
           </label>
           <input type="text" name="businessName" value={formData.businessName} onChange={handleChange}
-            className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-500 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700/70 text-slate-900 dark:text-white placeholder-slate-400/70 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
             placeholder="Enter your business or brand name"
             required
           />
@@ -83,13 +83,13 @@ export default function RequestMerchantForm() {
             Business Details
           </label>
           <textarea name="details" value={formData.details} onChange={handleChange} rows={5}
-            className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-500 focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+            className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700/70 text-slate-900 dark:text-white placeholder-slate-400/70 focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
             placeholder="Describe your business, what you plan to offer, and why you want to become a merchant..."
             required
           />
         </div>
 
-        <button type="submit" disabled={loading} className="w-full px-4 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 disabled:from-slate-400 disabled:to-slate-400 transition-all font-medium shadow-sm">
+        <button type="submit" disabled={loading} className="w-full px-4 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 disabled:from-slate-400 disabled:to-slate-400 transition-all font-medium shadow-sm cursor-pointer">
           {loading ? (
             <span className="inline-flex items-center gap-2">
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />

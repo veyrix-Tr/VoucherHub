@@ -57,7 +57,7 @@ export default function MyVouchers({ activeSection }) {
   };
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+    <div className="bg-white dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
       <div className="p-6 border-b border-slate-200 dark:border-slate-700">
         <div className="flex items-center justify-between">
           <div>

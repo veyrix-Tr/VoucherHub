@@ -12,7 +12,7 @@ export default function MerchantVoucherForm({ signer, contractAddress }) {
 	const [form, setForm] = useState({
 		title: "",
 		description: "",
-		maxMint: "100",
+		maxMint: "1",
 		expiry: "",
 		price: "0",
 		image: null,
@@ -233,12 +233,12 @@ export default function MerchantVoucherForm({ signer, contractAddress }) {
 						<div className="relative border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-2xl p-4 text-center transition-all hover:border-purple-500">
 							{imagePreview ? (
 								<div className="space-y-2">
-									<img src={imagePreview} alt="Preview" className="w-32 h-32 object-cover rounded-2xl mx-auto" />
+									<img src={imagePreview} alt="Preview" className="w-40 h-32 object-cover rounded-xl mx-auto" />
 									<button type="button" onClick={() => {
 										setImagePreview(null);
 										setForm((prev) => ({ ...prev, image: null }));
 									}}
-										className="text-sm text-red-600 hover:text-red-800 bg-red-300/10 px-3 py-0.5 rounded-md cursor-pointer"
+										className="text-sm text-red-400 hover:text-red-800 bg-red-300/10 px-3 py-0.5 rounded-md cursor-pointer mt-2"
 									>
 										Remove Image
 									</button>

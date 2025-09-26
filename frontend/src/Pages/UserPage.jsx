@@ -22,9 +22,7 @@ export default function UserPage() {
 
         <div className="grid lg:grid-cols-4 gap-10">
           <aside className="lg:col-span-1">
-            <div className="bg-white/90 dark:bg-slate-900/80 backdrop-blur-sm 
-              rounded-2xl border border-slate-200 dark:border-slate-700 
-              shadow-xl p-6 transition-all">
+            <div className="bg-white/90 dark:bg-slate-800/60 backdrop-blur-sm rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl p-6 transition-all">
               <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
                 Voucher Categories
               </h3>
@@ -35,7 +33,7 @@ export default function UserPage() {
                   { key: "redeemed", label: "Redeemed Vouchers", icon: "🟡" }
                 ].map((item) => (
                   <button key={item.key} onClick={() => setActiveSection(item.key)}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left font-medium transition-all ${activeSection === item.key
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left font-medium cursor-pointer ${activeSection === item.key
                         ? "bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-purple-300 dark:border-purple-700 text-purple-600 dark:text-purple-400 shadow-sm"
                         : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
                       }`}
@@ -49,7 +47,7 @@ export default function UserPage() {
           </aside>
 
           <section className="lg:col-span-3 space-y-10">
-            <div className="bg-white/90 dark:bg-slate-900/80 backdrop-blur-sm 
+            <div className="bg-white/90 dark:bg-slate-900/70 backdrop-blur-sm 
               rounded-2xl border border-slate-200 dark:border-slate-700 
               shadow-xl p-8 transition-all">
               <MyVouchers activeSection={activeSection} />

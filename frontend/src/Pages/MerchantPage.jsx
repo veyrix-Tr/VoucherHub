@@ -34,6 +34,28 @@ export default function MerchantPage() {
     rejected: { label: "Rejected", color: "red", icon: "❌" },
     redeemed: { label: "Redeemed", color: "blue", icon: "🎫" },
   };
+  const colorClasses = {
+    green: {
+      bg: "bg-green-50 dark:bg-green-900/30",
+      label: "text-green-700 dark:text-green-300",
+      value: "text-green-600 dark:text-green-400",
+    },
+    yellow: {
+      bg: "bg-yellow-50 dark:bg-yellow-900/30",
+      label: "text-yellow-700 dark:text-yellow-300",
+      value: "text-yellow-600 dark:text-yellow-400",
+    },
+    red: {
+      bg: "bg-red-50 dark:bg-red-900/30",
+      label: "text-red-700 dark:text-red-300",
+      value: "text-red-600 dark:text-red-400",
+    },
+    blue: {
+      bg: "bg-blue-50 dark:bg-blue-900/30",
+      label: "text-blue-700 dark:text-blue-300",
+      value: "text-blue-600 dark:text-blue-400",
+    },
+  };
 
   const grouped = useMemo(() => {
     return vouchers.reduce((acc, v) => {
@@ -41,8 +63,6 @@ export default function MerchantPage() {
       return acc;
     }, {});
   }, [vouchers]);
-
-  const current = grouped[activeTab] || [];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-900 transition-colors">
@@ -83,9 +103,9 @@ export default function MerchantPage() {
               <div className="rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl p-6 space-y-4 bg-white/90 dark:bg-slate-900/80">
                 <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Voucher Stats</h3>
                 {Object.entries(statusConfig).map(([key, { label, color }]) => (
-                  <div key={key} className={`flex justify-between items-center p-3 bg-${color}-50 dark:bg-${color}-900/30 rounded-lg`}>
-                    <span className={`font-medium text-${color}-700 dark:text-${color}-300`}>{label}</span>
-                    <span className={`text-lg font-bold text-${color}-600 dark:text-${color}-400`}>{(grouped[key] || []).length}</span>
+                  <div key={key} className={`flex justify-between items-center p-3 ${colorClasses[color].bg} rounded-lg`}>
+                    <span className={`font-medium ${colorClasses[color].label}`}>{label}</span>
+                    <span className={`text-lg font-bold ${colorClasses[color].value}`}>{(grouped[key] || []).length}</span>
                   </div>
                 ))}
                 <div className="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-700 rounded-lg">
