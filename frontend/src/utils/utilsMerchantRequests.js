@@ -1,5 +1,6 @@
 import axios from "axios";
 import { ethers } from "ethers";
+import { toast } from "react-hot-toast";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
@@ -13,6 +14,7 @@ export async function fetchMerchantRequests(status, setRequests, setLoading) {
 
   } catch (err) {
     console.error("fetchMerchantRequests error", err);
+    toast.error("fetchMerchantRequests error", err);
     setRequests([]);
   } finally {
     setLoading(false);
@@ -37,6 +39,7 @@ export async function approveMerchantRequest(req, signer, MerchantRegistryABI, r
     return true;
   } catch (err) {
     console.error("approveMerchantRequest error:", err);
+    toast.error("approveMerchantRequest error:", err);
     return false;
   }
 }
@@ -51,6 +54,7 @@ export async function rejectMerchantRequest(reqId, notes = "") {
     return true;
   } catch (err) {
     console.error("rejectMerchantRequest error:", err);
+    toast.error("rejectMerchantRequest error:", err);
     return false;
   }
 }
