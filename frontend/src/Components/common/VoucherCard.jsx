@@ -109,7 +109,7 @@ export default function VoucherCard({
           <div className="flex gap-2 w-full">
             {onApprove && (
               <button onClick={() => onApprove(voucher)}
-                className="inline-flex items-center gap-2 px-3 py-2 bg-emerald-500 text-white rounded-lg text-sm font-medium hover:bg-emerald-600 transition-all duration-200 hover:shadow-md flex-1 justify-center"
+                className="inline-flex items-center gap-2 px-3 py-2 bg-emerald-500 text-white rounded-lg text-sm font-medium hover:bg-emerald-600 transition-all duration-200 hover:shadow-md flex-1 justify-center cursor-pointer"
               >
                 <CheckIcon className="w-4 h-4" />
                 Approve
@@ -117,7 +117,7 @@ export default function VoucherCard({
             )}
             {onReject && (
               <button onClick={() => onReject(voucher)}
-                className="inline-flex items-center gap-2 px-3 py-2 bg-red-500 text-white rounded-lg text-sm font-medium hover:bg-red-600 transition-all duration-200 hover:shadow-md flex-1 justify-center"
+                className="inline-flex items-center gap-2 px-3 py-2 bg-red-500 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-all duration-200 hover:shadow-md flex-1 justify-center cursor-pointer"
               >
                 <XMarkIcon className="w-4 h-4" />
                 Reject

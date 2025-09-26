@@ -5,7 +5,6 @@ import { toast } from "react-hot-toast";
 import MerchantRegistryABI from "../../../../backend/src/abi/MerchantRegistry.json";
 import CONTRACT_ADDRESSES from "../../contracts/addresses.js";
 import { fetchMerchantRequests } from "../../utils/utilsMerchantRequests.js";
-import { ArrowPathIcon, UserIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
 export default function AdminMerchantStatus() {
   const { signer, account } = useWallet();

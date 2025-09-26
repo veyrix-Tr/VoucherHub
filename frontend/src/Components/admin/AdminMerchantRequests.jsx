@@ -129,8 +129,8 @@ export default function AdminMerchantRequests() {
 
                     <p className="text-slate-600 dark:text-slate-300 mb-3">{req.details}</p>
 
-                    <div className="flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
-                      <span className="font-mono bg-slate-100 dark:bg-slate-600 px-2 py-1 rounded">
+                    <div className="flex items-center gap-4 text-sm text-slate-500 dark:text-slate-300">requested by:
+                      <span className="font-mono bg-slate-100 dark:bg-slate-600/80 px-2 py-1 rounded">
                         {req.address}
                       </span>
                       <span>{new Date(req.createdAt).toLocaleDateString()}</span>

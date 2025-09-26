@@ -12,7 +12,7 @@ import { toast } from "react-hot-toast";
 import AdminMerchantStatus from "../Components/admin/AdminMerchantStatus.jsx";
 
 export default function AdminPage() {
-  const { provider, signer, account } = useWallet();
+  const { signer, account } = useWallet();
   const [vouchers, setVouchers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [statusLoading, setStatusLoading] = useState({});
@@ -119,7 +119,7 @@ export default function AdminPage() {
         <div className="flex border-b border-slate-200 dark:border-slate-700 mb-8">
           {tabs.map((tab) => (
             <button key={tab.key} onClick={() => setActiveTab(tab.key)}
-              className={`flex items-center gap-3 px-6 py-4 text-md font-medium border-b-2 transition-all ${activeTab === tab.key
+              className={`flex items-center gap-3 px-6 py-4 text-md font-medium border-b-2 transition-all cursor-pointer ${activeTab === tab.key
                 ? "border-blue-500 text-blue-600 dark:text-blue-400"
                 : "border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
                 }`}
