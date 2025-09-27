@@ -257,6 +257,7 @@ export default function MerchantVoucherForm({ signer, contractAddress, isActive 
 										name="image"
 										accept="image/*"
 										onChange={handleChange}
+										required
 										className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
 									/>
 								</div>

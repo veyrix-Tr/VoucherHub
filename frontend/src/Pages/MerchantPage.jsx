@@ -10,7 +10,7 @@ import MyVouchers from "../Components/merchant/MyVouchers.jsx";
 import { ethers } from "ethers";
 
 export default function MerchantPage() {
-  const { account, signer, provider } = useWallet();
+  const { account, signer, provider, isInitializing } = useWallet();
   const [vouchers, setVouchers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("approved");
@@ -20,7 +20,7 @@ export default function MerchantPage() {
 
   useEffect(() => {
     loadVouchers();
-  }, [account]);
+  }, [account, isInitializing]);
 
   useEffect(() => {
     const fetchActive = async () => {
@@ -44,7 +44,7 @@ export default function MerchantPage() {
   const loadVouchers = async () => {
     if (account) {
       await fetchVouchersByOwner(account, setVouchers, setLoading);
-    } else {
+    } else if(!isInitializing) {
       toast.error("Please connect your wallet first");
     }
   };

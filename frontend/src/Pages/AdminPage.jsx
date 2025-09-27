@@ -42,9 +42,11 @@ export default function AdminPage() {
   };
 
   async function handleApprove(v) {
-    if (!signer) {
-      return toast.error("Connect wallet as admin");
-    } else if (!voucherContractAddress) {
+    if (!account) {
+      return toast.error("Please connect your wallet first");
+    }
+    
+    if (!voucherContractAddress) {
       return toast.error("Voucher contract address not found");
     }
 
@@ -54,7 +56,7 @@ export default function AdminPage() {
 
       const contract = new ethers.Contract(voucherContractAddress, VoucherABI, signer);
       let voucherIdForContract = ethers.BigNumber.from(v.voucherId);
-
+      
       const tx = await contract.setVoucherApproval(voucherIdForContract, true);
       toast.promise(
         tx.wait(),

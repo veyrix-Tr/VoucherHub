@@ -1,72 +1,142 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { ethers } from "ethers";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 
-// context define to use anywhere
+const WALLET_STORAGE_KEY = "voucher_swap_wallet_state";
+
 const WalletContext = createContext();
 
-//cotext-provider which would wrap entire code and give it these all values of account, signer, provider, connectWallet means when in entire children or wrapped code we want to use this, we can use it by useContext            
-// means just defines values and functions and give to context to use in provider
 export const WalletProvider = ({ children }) => {
-	const [account, setAccount] = useState(null);
-	const [signer, setSigner] = useState(null);
-	const [provider, setProvider] = useState(null);
-	const navigate = useNavigate();
+  const [account, setAccount] = useState(null);
+  const [signer, setSigner] = useState(null);
+  const [provider, setProvider] = useState(null);
+  const [isInitializing, setIsInitializing] = useState(true);
+  const navigate = useNavigate();
 
-	const connectWallet = async (role) => {
-		/** 
-		* Safely check if running in browser and MetaMask (window.ethereum) is available
-		* we are not using !window because in Node.js or any non-browser environment, window does not exist so would say 
-		ReferenceError: window is not defined
-		means would ask which window are you talking about
-		*/
-		if (typeof window === "undefined" || !window.ethereum) {
-			alert("Please Install MetaMask");
-		} else {
-			try {
-				await window.ethereum.request({ method: "eth_requestAccounts" });
+  useEffect(() => {
+    const checkWalletConnection = async () => {
+      if (typeof window === "undefined" || !window.ethereum) {
+        setIsInitializing(false);
+        return;
+      }
 
-				// read-only connection which allows querying the blockchain state or event logs, needed when interact with contracts
-				const provider = new ethers.providers.Web3Provider(window.ethereum);
+      try {
+        const savedState = localStorage.getItem(WALLET_STORAGE_KEY);
+        if (savedState) {
+          const accounts = await window.ethereum.request({ method: "eth_accounts" });
+          if (accounts.length > 0) {
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const signer = provider.getSigner();
+            const address = accounts[0];
+            
+            setProvider(provider);
+            setSigner(signer);
+            setAccount(address);
+            
+            localStorage.setItem(WALLET_STORAGE_KEY, JSON.stringify({ 
+              account: address 
+            }));
+          }
+        }
+      } catch (error) {
+        console.error("Failed to restore wallet connection:", error);
+        localStorage.removeItem(WALLET_STORAGE_KEY);
+      } finally {
+        setIsInitializing(false);
+      }
+    };
 
-				// get signer from the blockchain which would help to sign vouchers
-				const signer = provider.getSigner();
+    checkWalletConnection();
 
-				// show connected wallet
-				const address = await signer.getAddress();
-				setProvider(provider);
-				setSigner(signer);
-				setAccount(address);
-				toast.success("Wallet connected!", {
-					className: "font-[400]",
-					duration: 1500,
-					showProgressBar: true
-				})
-				navigate(`/${role}`)
-			} catch (error) {
-				toast.error("Failed to connect wallet")
-			}
-		}
-	}
-	const disconnectWallet = () => {
-		setProvider(null);
-		setSigner(null);
-		setAccount(null);
-		toast("Wallet disconnected!", {
-			icon: "⚡",
-			duration: 1500,
-			showProgressBar: true
-		});
-		navigate("/");
-	};
+    // Handle account changes
+    const handleAccountsChanged = (accounts) => {
+      if (accounts.length === 0) {
+        disconnectWallet();
+      } else if (account && accounts[0].toLowerCase() !== account.toLowerCase()) {
+        setAccount(accounts[0]);
+      }
+    };
 
-	return (
-		<WalletContext.Provider value={{ account, signer, provider, connectWallet, disconnectWallet }}>
-			{children}
-		</WalletContext.Provider>
-	)
-}
+    if (window.ethereum) {
+      window.ethereum.on('accountsChanged', handleAccountsChanged);
+    }
 
-// a function to use values in WalletContext
-export const useWallet = () => useContext(WalletContext);
+    return () => {
+      if (window.ethereum) {
+        window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+      }
+    };
+  }, [account]);
+
+  const connectWallet = async (role) => {
+    if (typeof window === "undefined" || !window.ethereum) {
+      toast.error("Please Install MetaMask");
+      return;
+    }
+
+    try {
+      const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const address = accounts[0];
+      
+      setProvider(provider);
+      setSigner(signer);
+      setAccount(address);
+      
+      localStorage.setItem(WALLET_STORAGE_KEY, JSON.stringify({ 
+        account: address 
+      }));
+
+      toast.success("Wallet connected!", {
+        className: "font-[400]",
+        duration: 1500,
+        showProgressBar: true
+      });
+
+      if (role) {
+        navigate(`/${role}`);
+      }
+    } catch (error) {
+      console.error("Error connecting wallet:", error);
+      toast.error("Failed to connect wallet");
+    }
+  };
+
+  const disconnectWallet = () => {
+    localStorage.removeItem(WALLET_STORAGE_KEY);
+    setProvider(null);
+    setSigner(null);
+    setAccount(null);
+    
+    toast("Wallet disconnected!", {
+      icon: "⚡",
+      duration: 1500,
+      showProgressBar: true
+    });
+    
+    navigate("/");
+  };
+
+  return (
+    <WalletContext.Provider value={{ 
+      account, 
+      signer, 
+      provider, 
+      connectWallet, 
+      disconnectWallet,
+      isInitializing
+    }}>
+      {children}
+    </WalletContext.Provider>
+  );
+};
+
+export const useWallet = () => {
+  const context = useContext(WalletContext);
+  if (!context) {
+    throw new Error('useWallet must be used within a WalletProvider');
+  }
+  return context;
+};

@@ -7,19 +7,19 @@ import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { toast } from "react-hot-toast";
 
 export default function MyVouchers({ activeSection }) {
-  const { account } = useWallet();
+  const { account, isInitializing } = useWallet();
   const [vouchers, setVouchers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [redeemingVoucher, setRedeemingVoucher] = useState(null);
 
   useEffect(() => {
     loadVouchers();
-  }, [account]);
+  }, [account, isInitializing]);
 
   const loadVouchers = async () => {
     if (account) {
      await fetchVouchersByOwner(account, setVouchers, setLoading);
-    } else {
+    } else if(!isInitializing) {
       toast.error("Please connect your wallet first");
     }
   };
