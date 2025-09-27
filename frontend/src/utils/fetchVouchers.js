@@ -55,3 +55,18 @@ export const fetchVouchersByOwner = async (owner, setVouchers, setLoading) => {
     setLoading(false);
   }
 };
+export const fetchVouchersByMerchant = async (merchant, setVouchers, setLoading) => {
+  setLoading(true);
+  try {
+    const res = await axios.get(`${backendUrl}/api/vouchers?merchant=${merchant}`);
+    const enriched = await fetchVouchers(res);
+    setVouchers(enriched);
+
+  } catch (err) {
+    console.error("Failed to load merchant vouchers", err);
+    toast.error("Failed to load vouchers");
+    setVouchers([]);
+  } finally {
+    setLoading(false);
+  }
+};

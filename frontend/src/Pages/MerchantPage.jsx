@@ -3,7 +3,7 @@ import { useWallet } from "../Context/WalletContext.jsx";
 import addresses from "../contracts/addresses.js";
 import merchantRegistryAbi from '../../../backend/src/abi/MerchantRegistry.json' with { type: "json" };
 import MerchantVoucherForm from "../Components/merchant/MerchantVoucherForm.jsx";
-import { fetchVouchersByOwner } from "../utils/fetchVouchers.js";
+import { fetchVouchersByMerchant } from "../utils/fetchVouchers.js";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { toast } from "react-hot-toast";
 import MyVouchers from "../Components/merchant/MyVouchers.jsx";
@@ -43,12 +43,11 @@ export default function MerchantPage() {
 
   const loadVouchers = async () => {
     if (account) {
-      await fetchVouchersByOwner(account, setVouchers, setLoading);
+      await fetchVouchersByMerchant(account, setVouchers, setLoading);
     } else if(!isInitializing) {
       toast.error("Please connect your wallet first");
     }
   };
-
   const statusConfig = {
     approved: { label: "Approved", color: "green", icon: "✅" },
     pending: { label: "Pending", color: "yellow", icon: "⏳" },
@@ -115,7 +114,7 @@ export default function MerchantPage() {
             </div>
 
             <MyVouchers
-              vouchers={vouchers} loading={loading} activeTab={activeTab} setActiveTab={setActiveTab} loadVouchers={loadVouchers} statusConfig={statusConfig} grouped={grouped}
+              loading={loading} activeTab={activeTab} setActiveTab={setActiveTab} loadVouchers={loadVouchers} statusConfig={statusConfig} grouped={grouped}
             />
           </div>
 

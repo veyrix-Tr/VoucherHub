@@ -1,8 +1,8 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import VoucherCard from "../common/VoucherCard.jsx";
 
-export default function MyVouchers({ vouchers, loading, activeTab, setActiveTab, loadVouchers, statusConfig, grouped }) {
+export default function MyVouchers({ loading, activeTab, setActiveTab, loadVouchers, statusConfig, grouped }) {
   const current = grouped[activeTab] || [];
 
   return (
