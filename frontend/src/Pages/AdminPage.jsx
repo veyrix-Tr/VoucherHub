@@ -189,6 +189,12 @@ export default function AdminPage() {
         ) : (
           <AdminMerchantRequests />
         )}
+
+        <div className="mt-16">
+          <div className="p-6">
+            <AdminMerchantStatus />
+          </div>
+        </div>
       </div>
 
       {showRejectModal && (
@@ -261,9 +267,6 @@ export default function AdminPage() {
         </div>
       )}
 
-      <div>
-        <AdminMerchantStatus />
-      </div>
     </div>
   );
 }

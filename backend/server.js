@@ -20,7 +20,7 @@ app.use(bodyParser.json());
 app.use("/api/vouchers", voucherRoutes);
 app.use("/api/merchant-requests", merchantRequestRoutes);
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
   connectDB().then(() => {

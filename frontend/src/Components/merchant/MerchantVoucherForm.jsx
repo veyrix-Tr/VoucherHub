@@ -8,7 +8,7 @@ import { toast } from "react-hot-toast";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-export default function MerchantVoucherForm({ signer, contractAddress }) {
+export default function MerchantVoucherForm({ signer, contractAddress, isActive }) {
 	const [form, setForm] = useState({
 		title: "",
 		description: "",
@@ -41,9 +41,14 @@ export default function MerchantVoucherForm({ signer, contractAddress }) {
 		}
 	};
 
+
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
+		if(!isActive){
+			toast.error("You activity is paused for some time");
+			return;
+		}
 		if (!signer) {
 			toast.error("Please connect your wallet first");
 			return;

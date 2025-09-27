@@ -38,7 +38,7 @@ export default function VoucherCard({
   const formatPrice = (price) => {
     if (!price) return "Free";
     else if (price == 0) return "Free";
-    return `${Number(price).toFixed(3)} ETH`;
+    return `${Number(price/1e18).toFixed(3)} ETH`;
   };
 
   return (

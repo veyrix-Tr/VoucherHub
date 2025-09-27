@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import githubIcon from "../../public/images/github-icon.png";
+import voucherLogo from "../../public/images/voucher-logo.png";
 import { useWallet } from "../../Context/WalletContext.jsx";
 import { toast } from 'react-hot-toast';
 import { NavLink } from "react-router-dom";
@@ -22,12 +23,11 @@ const Navbar = ({ currentRole, roleConfig }) => {
   return (
     <nav className="bg-gradient-to-r from-blue-600 to-purple-600 backdrop-blur-md bg-opacity-90 shadow-lg p-5">
       <div className="max-w-9xl mx-auto flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <div className="w-12 h-12 bg-black bg-opacity-20 rounded-lg flex items-center justify-center hover:scale-110 transition-transform duration-200">
-            {/* Placeholder for logo - replace with your image */}
-            <img src={""} alt="" className='w-7 absolute' />
+        <div className="flex items-center space-x-4">
+          <div className="w-18 h-18 bg-blue-600/20 flex items-center justify-center hover:scale-110 transition-transform duration-200 pl-1">
+            <img src={voucherLogo} alt="Logo" className=' w-18 absolute' />
           </div>
-          <NavLink to={`/${currentRole}`} className="flex items-center gap-2 brand text-[45px]">
+          <NavLink to={`/${currentRole}`} className="flex items-center gap-2 brand text-5xl">
             VoucherSwap
           </NavLink>
         </div>

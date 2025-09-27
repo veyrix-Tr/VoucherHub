@@ -19,8 +19,6 @@ export default function AdminMerchantRequests() {
     loadRequests();
   }, []);
 
-  console.log(requests);
-
   const loadRequests = async () => {
     await fetchMerchantRequests("pending", setRequests, setLoading);
   };

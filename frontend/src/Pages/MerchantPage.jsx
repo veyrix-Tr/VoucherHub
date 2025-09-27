@@ -1,24 +1,45 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useWallet } from "../Context/WalletContext.jsx";
 import addresses from "../contracts/addresses.js";
+import merchantRegistryAbi from '../../../backend/src/abi/MerchantRegistry.json' with { type: "json" };
 import MerchantVoucherForm from "../Components/merchant/MerchantVoucherForm.jsx";
-import VoucherCard from "../Components/common/VoucherCard.jsx";
 import { fetchVouchersByOwner } from "../utils/fetchVouchers.js";
-import { ArrowPathIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { PlusIcon } from "@heroicons/react/24/outline";
 import { toast } from "react-hot-toast";
 import MyVouchers from "../Components/merchant/MyVouchers.jsx";
+import { ethers } from "ethers";
 
 export default function MerchantPage() {
   const { account, signer, provider } = useWallet();
   const [vouchers, setVouchers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("approved");
+  const [isActive, setIsActive] = useState(false);
 
   const chainId = provider?._network?.chainId || parseInt(import.meta.env.VITE_CHAIN_ID || "11155111", 10);
 
   useEffect(() => {
     loadVouchers();
   }, [account]);
+
+  useEffect(() => {
+    const fetchActive = async () => {
+      if (account) {
+        const active = await checkActive(account);
+        setIsActive(active);
+      }
+    };
+    fetchActive();
+  }, [account, provider, chainId]);
+
+  const checkActive = async (account) => {
+    const registry = new ethers.Contract(
+      addresses[chainId]?.merchantRegistry,
+      merchantRegistryAbi,
+      provider
+    );
+    return await registry.isMerchant(account);
+  }
 
   const loadVouchers = async () => {
     if (account) {
@@ -89,7 +110,7 @@ export default function MerchantPage() {
                 </div>
               </div>
               <div className="p-6">
-                <MerchantVoucherForm signer={signer} contractAddress={addresses[chainId]?.voucherERC1155} />
+                <MerchantVoucherForm signer={signer} contractAddress={addresses[chainId]?.voucherERC1155} isActive={isActive} />
               </div>
             </div>
 
