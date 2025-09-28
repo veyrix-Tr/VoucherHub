@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { ethers } from "ethers";
 import { useWallet } from "../Context/WalletContext.jsx";
-import VoucherABI from "../../../backend/src/abi/VoucherERC1155.json";
+import VoucherABI from "@contracts/exports/abi/VoucherERC1155.json";
 import addresses from "../contracts/addresses.js";
 import { fetchVouchersByStatus } from "../utils/fetchVouchers.js";
 import VoucherCard from "../Components/common/VoucherCard.jsx";

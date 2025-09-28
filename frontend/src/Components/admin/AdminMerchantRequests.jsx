@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useWallet } from "../../Context/WalletContext.jsx";
 import { fetchMerchantRequests, approveMerchantRequest, rejectMerchantRequest } from "../../utils/utilsMerchantRequests.js";
-import MerchantRegistryABI from "../../../../backend/src/abi/MerchantRegistry.json";
+import MerchantRegistryABI from "@contracts/exports/abi/MerchantRegistry.json";
 import CONTRACT_ADDRESSES from "../../contracts/addresses.js";
 import { CheckIcon, XMarkIcon, UserIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
 import { toast } from "react-hot-toast";

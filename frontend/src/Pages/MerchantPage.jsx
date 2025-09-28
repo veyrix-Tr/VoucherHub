@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useWallet } from "../Context/WalletContext.jsx";
 import addresses from "../contracts/addresses.js";
-import merchantRegistryAbi from '../../../backend/src/abi/MerchantRegistry.json' with { type: "json" };
+import merchantRegistryAbi from '@contracts/exports/abi/MerchantRegistry.json' with { type: "json" };
 import MerchantVoucherForm from "../Components/merchant/MerchantVoucherForm.jsx";
 import { fetchVouchersByMerchant } from "../utils/fetchVouchers.js";
 import { PlusIcon } from "@heroicons/react/24/outline";

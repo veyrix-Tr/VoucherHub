@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import { useWallet } from "../../Context/WalletContext.jsx";
 import { toast } from "react-hot-toast";
-import MerchantRegistryABI from "../../../../backend/src/abi/MerchantRegistry.json";
+import MerchantRegistryABI from "@contracts/exports/abi/MerchantRegistry.json";
 import CONTRACT_ADDRESSES from "../../contracts/addresses.js";
 import { fetchMerchantRequests } from "../../utils/utilsMerchantRequests.js";
 import { ArrowPathIcon, CheckIcon, XMarkIcon, UserGroupIcon } from "@heroicons/react/24/outline";

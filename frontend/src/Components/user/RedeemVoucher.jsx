@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { ethers } from "ethers";
 import { useWallet } from "../../Context/WalletContext.jsx";
 import CONTRACT_ADDRESSES from "../../contracts/addresses.js";
-import VoucherERC1155ABI from "../../../../backend/src/abi/VoucherERC1155.json";
+import VoucherERC1155ABI from "@contracts/exports/abi/VoucherERC1155.json";
 import axios from "axios";
 import { XMarkIcon, GiftIcon } from "@heroicons/react/24/outline";
 import { toast } from "react-hot-toast";

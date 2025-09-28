@@ -1,6 +1,5 @@
 import { ethers } from "ethers";
 import MerchantRequest from "../models/MerchantRequest.js";
-import merchantRegistryAbi from "../abi/MerchantRegistry.json" with { type: "json" };
 
 export const createRequest = async (req, res) => {
   try {
@@ -9,6 +8,7 @@ export const createRequest = async (req, res) => {
     if (!address || !name || !details) {
       return res.status(400).json({ error: "All fields required" });
     }
+
     const existing = await MerchantRequest.findOne({ address }) || await MerchantRequest.findOne({ name });
     if (existing) {
       return res.status(400).json({ error: "Request already submitted" });

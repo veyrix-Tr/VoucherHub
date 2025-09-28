@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import Voucher from "../models/Voucher.js";
-import merchantRegistryAbi from '../abi/MerchantRegistry.json' with { type: "json" };
-import voucherAbi from '../abi/VoucherERC1155.json' with { type: "json" };
+import merchantRegistryAbi from '../../../contracts/exports/abi/MerchantRegistry.json' with { type: "json" };
+import voucherAbi from '../../../contracts/exports/abi/VoucherERC1155.json' with { type: "json" };
 
 export const createVoucher = async (req, res) => {
   try {
