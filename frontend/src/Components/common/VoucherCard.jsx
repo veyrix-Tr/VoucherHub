@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import VoucherModal from "./VoucherModal.jsx";
-import { EyeIcon, CheckIcon, XMarkIcon, GiftIcon, ArrowsRightLeftIcon, ClockIcon,} from "@heroicons/react/24/outline";
+import { EyeIcon, CheckIcon, XMarkIcon, GiftIcon, ArrowsRightLeftIcon, ClockIcon, } from "@heroicons/react/24/outline";
 
 export default function VoucherCard({
   voucher, role, userBalance,
-  onApprove, onReject, onRedeem, onSwap,
+  onApprove, onReject, onRedeem, onSwap, onIssue
 }) {
   const [showModal, setShowModal] = useState(false);
 
@@ -38,7 +38,7 @@ export default function VoucherCard({
   const formatPrice = (price) => {
     if (!price) return "Free";
     else if (price == 0) return "Free";
-    return `${Number(price/1e18).toFixed(3)} ETH`;
+    return `${Number(price / 1e18).toFixed(3)} ETH`;
   };
 
   return (
@@ -139,6 +139,16 @@ export default function VoucherCard({
                 Swap
               </button>
             )}
+            {onIssue && voucher.status === "approved" && !isExpired && (
+              <button
+                onClick={() => onIssue(voucher)}
+                className="inline-flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-indigo-500 to-blue-500 text-white rounded-lg text-sm font-medium hover:from-indigo-600 hover:to-blue-600 transition-all duration-200 hover:shadow-md flex-1 justify-center"
+              >
+                <GiftIcon className="w-4 h-4" />
+                Issue
+              </button>
+            )}
+
           </div>
         </div>
 

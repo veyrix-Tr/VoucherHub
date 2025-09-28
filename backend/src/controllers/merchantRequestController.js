@@ -17,7 +17,7 @@ export const createRequest = async (req, res) => {
         return res.status(400).json({ error: "Request already submitted", message: existing });
       } else if (existing.status === "rejected") {
         return res.status(400).json({ error: "Request have been rejected", message: existing });
-      }
+      } else return;
     }
 
     const request = new MerchantRequest({ address, name, details });

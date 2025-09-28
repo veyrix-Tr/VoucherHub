@@ -114,7 +114,7 @@ export default function MerchantPage() {
             </div>
 
             <MyVouchers
-              loading={loading} activeTab={activeTab} setActiveTab={setActiveTab} loadVouchers={loadVouchers} statusConfig={statusConfig} grouped={grouped}
+              loading={loading} activeTab={activeTab} setActiveTab={setActiveTab} loadVouchers={loadVouchers} statusConfig={statusConfig} grouped={grouped} signer={signer}
             />
           </div>
 

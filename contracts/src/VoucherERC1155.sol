@@ -8,12 +8,11 @@ import "@openzeppelin/contracts/utils/cryptography/EIP712.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "./MerchantRegistry.sol";
 
-
 contract VoucherERC1155 is ERC1155, EIP712, Ownable, ReentrancyGuard {
     using ECDSA for bytes32;
 
     MerchantRegistry public immutable merchantRegistry;
-    
+
     struct VoucherData {
         uint256 voucherId;
         address merchant;
@@ -29,22 +28,23 @@ contract VoucherERC1155 is ERC1155, EIP712, Ownable, ReentrancyGuard {
     mapping(uint256 => VoucherData) public voucherInfo;
     mapping(uint256 => bool) public voucherApproved;
 
-
-    constructor(string memory baseURI, address _merchantRegistry) 
-        ERC1155(baseURI) 
-        EIP712("VoucherERC1155", "1")
-        Ownable(msg.sender)
-    {
+    constructor(
+        string memory baseURI,
+        address _merchantRegistry
+    ) ERC1155(baseURI) EIP712("VoucherERC1155", "1") Ownable(msg.sender) {
         merchantRegistry = MerchantRegistry(_merchantRegistry);
     }
 
     // it defines type of the voucher in hash format to avoid any change in VoucherData's type
-    bytes32 private constant VOUCHER_TYPEHASH = keccak256(
-        "VoucherData(uint256 voucherId,address merchant,uint256 maxMint,uint256 expiry,bytes32 metadataHash,string metadataCID,uint256 price,uint256 nonce)"
-    );
+    bytes32 private constant VOUCHER_TYPEHASH =
+        keccak256(
+            "VoucherData(uint256 voucherId,address merchant,uint256 maxMint,uint256 expiry,bytes32 metadataHash,string metadataCID,uint256 price,uint256 nonce)"
+        );
 
     //useful for verify signer in _verifyVoucher
-    function _hashVoucher(VoucherData memory _voucherData) public pure returns (bytes32) {
+    function _hashVoucher(
+        VoucherData memory _voucherData
+    ) public pure returns (bytes32) {
         bytes32 metadataCIDHash = keccak256(bytes(_voucherData.metadataCID));
         return keccak256(abi.encode(
             VOUCHER_TYPEHASH,
@@ -60,20 +60,35 @@ contract VoucherERC1155 is ERC1155, EIP712, Ownable, ReentrancyGuard {
     }
 
     // can use directly but wanted to make it public
-    function hashTypedDataV4Public(bytes32 structHash) public view returns (bytes32) {
+    function hashTypedDataV4Public(
+        bytes32 structHash
+    ) public view returns (bytes32) {
         return _hashTypedDataV4(structHash);
     }
 
     // for verifying the voucher before minting it returns the address of signer
-    function _verifyVoucher(VoucherData memory _voucherData, bytes memory signature) internal view returns (address) {
+    function _verifyVoucher(
+        VoucherData memory _voucherData,
+        bytes memory signature
+    ) internal view returns (address) {
         bytes32 structHash = _hashVoucher(_voucherData);
         bytes32 digest = _hashTypedDataV4(structHash);
         return ECDSA.recover(digest, signature);
     }
 
     // for minting voucher by user after issuing by merchant and approved by owner
-    event VoucherMinted(uint256 indexed voucherId, address indexed to, uint256 amount, string metadataCID);
-    function mintFromVoucher(VoucherData calldata v, bytes calldata signature, uint256 amount, address to) external nonReentrant {
+    event VoucherMinted(
+        uint256 indexed voucherId,
+        address indexed to,
+        uint256 amount,
+        string metadataCID
+    );
+    function mintFromVoucher(
+        VoucherData calldata v,
+        bytes calldata signature,
+        uint256 amount,
+        address to
+    ) external nonReentrant {
         require(voucherApproved[v.voucherId], "Voucher not approved");
         require(block.timestamp <= v.expiry, "Voucher expired");
         require(minted[v.voucherId] + amount <= v.maxMint, "maxMint exceeded");
@@ -86,16 +101,48 @@ contract VoucherERC1155 is ERC1155, EIP712, Ownable, ReentrancyGuard {
             voucherCID[v.voucherId] = v.metadataCID;
             emit URI(v.metadataCID, v.voucherId);
         }
+        if (voucherInfo[v.voucherId].voucherId == 0) {
+            voucherInfo[v.voucherId] = v;
+        }
         _mint(to, v.voucherId, amount, "");
         minted[v.voucherId] += amount;
         emit VoucherMinted(v.voucherId, to, amount, v.metadataCID);
     }
 
     // for burning to redeem the voucher
-    event Redeemed(uint256 indexed voucherId, address indexed who, uint256 amount, uint256 time);
-    function burnForRedeem(uint256 voucherId, uint256 amount) external nonReentrant {
+    event Redeemed(
+        uint256 indexed voucherId,
+        address indexed who,
+        uint256 amount,
+        uint256 time
+    );
+    function burnForRedeem(
+        uint256 voucherId,
+        uint256 amount
+    ) external nonReentrant {
         _burn(msg.sender, voucherId, amount);
         emit Redeemed(voucherId, msg.sender, amount, block.timestamp);
+    }
+
+    function issueVoucherToUser(
+        VoucherData calldata v,
+        uint256 amount,
+        address user
+    ) external nonReentrant {
+        require(msg.sender == v.merchant, "Only merchant can issue");
+        require(voucherApproved[v.voucherId], "Voucher not approved");
+        require(block.timestamp <= v.expiry, "Voucher expired");
+        require(minted[v.voucherId] + amount <= v.maxMint, "maxMint exceeded");
+        require(merchantRegistry.isMerchant(msg.sender), "merchant not active");
+
+        if (bytes(voucherCID[v.voucherId]).length == 0) {
+            voucherCID[v.voucherId] = v.metadataCID;
+            emit URI(v.metadataCID, v.voucherId);
+        }
+
+        _mint(user, v.voucherId, amount, "");
+        minted[v.voucherId] += amount;
+        emit VoucherMinted(v.voucherId, user, amount, v.metadataCID);
     }
 
     // Returns the metadata URI for a given voucher ID (overrides ERC1155 default URI) if metaData URI doesn't exist it just fallback to the parent (ERC1155) implementation with super.uri(id)
@@ -107,8 +154,10 @@ contract VoucherERC1155 is ERC1155, EIP712, Ownable, ReentrancyGuard {
     }
 
     // for owner to approve or reject the Voucher issue request by merchant
-    function setVoucherApproval(uint256 voucherId, bool status) external onlyOwner {
+    function setVoucherApproval(
+        uint256 voucherId,
+        bool status
+    ) external onlyOwner {
         voucherApproved[voucherId] = status;
     }
-
 }
