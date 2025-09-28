@@ -15,8 +15,8 @@ export default function App() {
   return (
     <>
       <Routes>
+        <Route path="/" element={<ConnectPage />} />
         <Route element={<Layout />}>
-          <Route path="/" element={<ConnectPage />} />
           <Route path="/merchant" element={<MerchantPage />} />
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/admin/merchant-requests" element={<AdminMerchantRequests />} />

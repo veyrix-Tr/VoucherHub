@@ -5,9 +5,7 @@ import { useRole } from "../Context/RoleContext.jsx";
 
 export default function ConnectPage() {
   const {role} = useRole();
-  const { account, connectWallet } = useWallet();
-
-  if (account) return null;
+  const { connectWallet } = useWallet();
 
   return (
     <div style={{

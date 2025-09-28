@@ -2,6 +2,7 @@ import { ethers } from "ethers";
 import Voucher from "../models/Voucher.js";
 import merchantRegistryAbi from '../../../contracts/exports/abi/MerchantRegistry.json' with { type: "json" };
 import voucherAbi from '../../../contracts/exports/abi/VoucherERC1155.json' with { type: "json" };
+import CONTRACT_ADDRESSES from "../../../contracts/exports/addresses/addresses.js";
 
 export const createVoucher = async (req, res) => {
   try {
@@ -10,12 +11,19 @@ export const createVoucher = async (req, res) => {
     if (!voucher || !signature) {
       return res.status(400).json({ error: "Missing voucher or signature" });
     }
+    if(chainId){
+      if(!CONTRACT_ADDRESSES[chainId]){
+        return res.status(400).json({ error: "Invalid chainId" });
+      }
+    } else{
+      chainId = 11155111;
+    }
 
     const domain = {
       name: "VoucherERC1155",
       version: "1",
       chainId: chainId || 11155111,
-      verifyingContract: process.env.VOUCHER_CONTRACT_ADDRESS,
+      verifyingContract: CONTRACT_ADDRESSES[chainId || 11155111].voucherERC1155,
     };
     const types = {
       VoucherData: [
@@ -41,7 +49,7 @@ export const createVoucher = async (req, res) => {
       return
     }
     const registry = new ethers.Contract(
-      process.env.MERCHANT_REGISTRY_ADDRESS,
+      CONTRACT_ADDRESSES[chainId].merchantRegistry,
       merchantRegistryAbi,
       provider
     );
@@ -92,7 +100,7 @@ export const getVouchers = async (req, res) => {
 
     if (owner) {
       const provider = new ethers.providers.JsonRpcProvider(process.env.RPC_URL);
-      const VOUCHER_CONTRACT_ADDRESS = process.env.VOUCHER_CONTRACT_ADDRESS
+      const VOUCHER_CONTRACT_ADDRESS = CONTRACT_ADDRESSES[chainId].voucherERC1155;
       const voucherContract = new ethers.Contract(VOUCHER_CONTRACT_ADDRESS, voucherAbi, provider);
 
       // due to await can't use map because map doesn’t wait for promises. It just returns an array of promises while 'for...of' runs each iteration sequentially, await pauses until balanceOf finishes.

@@ -3,7 +3,7 @@ import axios from "axios";
 import { ethers } from "ethers";
 import { useWallet } from "../Context/WalletContext.jsx";
 import VoucherABI from "@contracts/exports/abi/VoucherERC1155.json";
-import addresses from "../contracts/addresses.js";
+import addresses from "@contracts/exports/addresses/addresses.js";
 import { fetchVouchersByStatus } from "../utils/fetchVouchers.js";
 import VoucherCard from "../Components/common/VoucherCard.jsx";
 import AdminMerchantRequests from "../Components/admin/AdminMerchantRequests.jsx";
