@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useWallet } from "../Context/WalletContext.jsx";
-import addresses from "../contracts/addresses.js";
+import addresses from "@contracts/exports/addresses/addresses.js";
 import merchantRegistryAbi from '@contracts/exports/abi/MerchantRegistry.json' with { type: "json" };
 import MerchantVoucherForm from "../Components/merchant/MerchantVoucherForm.jsx";
 import { fetchVouchersByMerchant } from "../utils/fetchVouchers.js";
