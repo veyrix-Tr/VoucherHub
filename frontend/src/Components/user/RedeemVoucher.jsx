@@ -8,11 +8,11 @@ import { XMarkIcon, GiftIcon } from "@heroicons/react/24/outline";
 import { toast } from "react-hot-toast";
 
 export default function RedeemVoucher({ voucher, onClose, onSuccess }) {
-  const { account, signer } = useWallet();
+  const { account, signer, provider } = useWallet();
   const [amount, setAmount] = useState(1);
   const [loading, setLoading] = useState(false);
 
-  const CHAIN_ID = import.meta.env.VITE_CHAIN_ID || "11155111";
+  const CHAIN_ID = provider?._network?.chainId || parseInt(import.meta.env.VITE_CHAIN_ID || "11155111", 10);
 
   if (!voucher) return null;
 

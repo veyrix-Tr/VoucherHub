@@ -91,6 +91,8 @@ export const getVouchers = async (req, res) => {
     if (merchant) filter.merchant = merchant.toLowerCase();
     if (voucherId) filter.voucherId = voucherId;
 
+    const chainId = process.env.CHAIN_ID || 11155111;
+
     let vouchers = await Voucher.find(filter)
       .skip((page - 1) * limit)
       .limit(parseInt(limit))

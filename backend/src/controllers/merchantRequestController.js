@@ -11,7 +11,13 @@ export const createRequest = async (req, res) => {
 
     const existing = await MerchantRequest.findOne({ address }) || await MerchantRequest.findOne({ name });
     if (existing) {
-      return res.status(400).json({ error: "Request already submitted" });
+      if (existing.status === "approved") {
+        return res.status(400).json({ error: "Merchant already approved", message: existing });
+      } else if (existing.status === "pending") {
+        return res.status(400).json({ error: "Request already submitted", message: existing });
+      } else if (existing.status === "rejected") {
+        return res.status(400).json({ error: "Request have been rejected", message: existing });
+      }
     }
 
     const request = new MerchantRequest({ address, name, details });

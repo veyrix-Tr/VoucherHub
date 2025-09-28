@@ -8,13 +8,13 @@ import { fetchMerchantRequests } from "../../utils/utilsMerchantRequests.js";
 import { ArrowPathIcon, CheckIcon, XMarkIcon, UserGroupIcon } from "@heroicons/react/24/outline";
 
 export default function AdminMerchantStatus() {
-  const { signer, account } = useWallet();
+  const { signer, account, provider } = useWallet();
   const [merchants, setMerchants] = useState([]);
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(false);
   const [statusLoading, setStatusLoading] = useState({});
 
-  const CHAIN_ID = import.meta.env.VITE_CHAIN_ID || "11155111";
+  const CHAIN_ID = provider?._network?.chainId || import.meta.env.VITE_CHAIN_ID || "11155111";
   const MERCHANT_REGISTRY_ADDRESS = CONTRACT_ADDRESSES[CHAIN_ID]?.merchantRegistry;
 
   const contract = signer

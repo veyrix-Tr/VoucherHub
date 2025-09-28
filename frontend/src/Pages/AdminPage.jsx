@@ -12,7 +12,7 @@ import { toast } from "react-hot-toast";
 import AdminMerchantStatus from "../Components/admin/AdminMerchantStatus.jsx";
 
 export default function AdminPage() {
-  const { signer, account } = useWallet();
+  const { signer, account, provider } = useWallet();
   const [vouchers, setVouchers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [statusLoading, setStatusLoading] = useState({});
@@ -22,7 +22,7 @@ export default function AdminPage() {
   const [rejectText, setRejectText] = useState("");
 
   const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
-  const CHAIN_ID = parseInt(import.meta.env.VITE_CHAIN_ID || "11155111", 10);
+  const CHAIN_ID = provider?._network?.chainId || parseInt(import.meta.env.VITE_CHAIN_ID || "11155111", 10);
   const voucherContractAddress = addresses[CHAIN_ID]?.voucherERC1155;
 
   useEffect(() => {
