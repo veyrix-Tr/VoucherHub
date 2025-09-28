@@ -37,7 +37,6 @@ export default function RedeemVoucher({ voucher, onClose, onSuccess }) {
         ethers.BigNumber.from(amount)
       );
 
-      // Show toast notifications tied to the transaction lifecycle (pending → success/error)
       toast.promise(
         tx.wait(),
         {

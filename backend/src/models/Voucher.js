@@ -17,6 +17,7 @@ const voucherSchema = new mongoose.Schema({
   },
   approvedTxHash: { type: String },
   notes: { type: String },
+  minted: { type: String, default: "0" },
   redemptions: [
     {
       redeemer: { type: String, lowercase: true, required: true },

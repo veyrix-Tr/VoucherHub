@@ -248,3 +248,20 @@ export const redeemVoucher = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+export const updateMinted = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { minted } = req.body;
+
+    const voucher = await Voucher.findById(id);
+    if (!voucher) return res.status(404).json({ error: "Voucher not found" });
+
+    voucher.minted = minted;
+    await voucher.save();
+
+    res.json({ success: true, minted: voucher.minted });
+  } catch (err) {
+    console.error("Update minted error:", err);
+    res.status(500).json({ error: "Failed to update minted" });
+  }
+};

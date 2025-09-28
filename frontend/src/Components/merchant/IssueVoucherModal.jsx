@@ -3,6 +3,7 @@ import { ethers } from "ethers";
 import { toast } from "react-hot-toast";
 import VoucherABI from "@contracts/exports/abi/VoucherERC1155.json";
 import addresses from "@contracts/exports/addresses/addresses.js";
+import axios from "axios";
 
 export default function IssueVoucherModal({ voucher, signer, onClose, onSuccess }) {
   const [userAddress, setUserAddress] = useState("");
@@ -57,6 +58,15 @@ export default function IssueVoucherModal({ voucher, signer, onClose, onSuccess 
         const receipt = await tx.wait();
         toast.dismiss();
         toast.success("Voucher issued — tx confirmed");
+        try {
+          const newMinted = (Number(voucher.minted || "0") + amount);
+          await axios.put(`${import.meta.env.VITE_BACKEND_URL}/api/vouchers/${voucher._id}/minted`, {
+            minted: newMinted
+          });
+        } catch (err) {
+          console.error("Failed to update minted in backend:", err);
+        }
+
         onSuccess && onSuccess();
         onClose && onClose();
         return receipt;
