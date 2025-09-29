@@ -211,12 +211,10 @@ export const redeemVoucher = async (req, res) => {
       return res.status(404).json({ error: "Voucher not found" });
     }
 
-    // reduce reduces an array to a single value by applying a function repeatedly to each element
-    const totalRedeemed = voucher.redemptions
-      ? voucher.redemptions.reduce((sum, r) => sum + r.amount, 0)
-      : 0;
+    const totalRedeemed = voucher.redemptions?.reduce((sum, r) => sum + r.amount, 0) || 0;
+    const newTotalRedeemed = totalRedeemed + amount;
 
-    if (totalRedeemed + amount > voucher.maxMint) {
+    if (newTotalRedeemed > voucher.maxMint) {
       return res.status(400).json({ error: "Exceeds max mint limit" });
     }
     const redemptionEntry = {
@@ -229,18 +227,21 @@ export const redeemVoucher = async (req, res) => {
     voucher.redemptions = voucher.redemptions || [];
     voucher.redemptions.push(redemptionEntry);
 
-    if (totalRedeemed + amount >= voucher.maxMint) {
+    if (newTotalRedeemed >= voucher.maxMint) {
       voucher.status = "redeemed";
     }
 
     await voucher.save();
 
+    const isPartial = newTotalRedeemed > 0 && newTotalRedeemed < Number(voucher.maxMint);
+
     res.json({
       message: "Voucher redeemed",
       voucherId: voucher._id,
       status: voucher.status,
-      totalRedeemed: totalRedeemed + amount,
-      redemption: redemptionEntry
+      totalRedeemed: newTotalRedeemed,
+      redemption: redemptionEntry,
+      isPartialRedeemed: isPartial,
     });
 
   } catch (err) {

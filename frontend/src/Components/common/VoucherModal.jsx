@@ -3,6 +3,14 @@ import { XMarkIcon, DocumentTextIcon, UserIcon, CurrencyDollarIcon, CubeIcon, Ca
 
 export default function VoucherModal({ voucher, role, userBalance, onClose, expiryDate, isExpired, daysUntilExpiry, status }) {
   if (!voucher) return null;
+  const totalRedeemed = (voucher.redemptions || []).reduce((s, r) => s + (Number(r.amount) || 0), 0);
+  const maxMintNum = Number(voucher.maxMint);
+  const remainingUnits = Math.max(0, maxMintNum - totalRedeemed);
+
+  const hasAnyRedemptions = (voucher.redemptions || []).length > 0;
+  const isFullyRedeemed = maxMintNum > 0 && remainingUnits === 0 && hasAnyRedemptions;
+  const isPartiallyRedeemed = hasAnyRedemptions && remainingUnits > 0;
+
 
   const InfoItem = ({ icon: Icon, label, value }) => (
     <div className="flex items-start gap-3 py-3 border-b border-gray-100 dark:border-slate-700 last:border-b-0">
@@ -48,6 +56,15 @@ export default function VoucherModal({ voucher, role, userBalance, onClose, expi
                     Expired
                   </span>
                 )}
+                {hasAnyRedemptions && (
+                  <div className="pl-2">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${isFullyRedeemed ? "bg-purple-100 text-purple-800 border-purple-200"
+                      : "bg-pink-100 text-pink-800 border-pink-200"
+                      }`}>
+                      {isFullyRedeemed ? "Fully Redeemed" : "Partially Redeemed"}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -80,10 +97,10 @@ export default function VoucherModal({ voucher, role, userBalance, onClose, expi
                 <div className="space-y-0">
                   <InfoItem icon={CubeIcon} label="Voucher ID" value={voucher.voucherId || "Not available"} />
                   <InfoItem icon={UserIcon} label="Merchant" value={voucher.merchant || voucher.merchantName || "Unknown"} />
-                  <InfoItem icon={CurrencyDollarIcon} label="Price" value={voucher.price ? `$${voucher.price}` : "Free"}/>
+                  <InfoItem icon={CurrencyDollarIcon} label="Price" value={voucher.price ? `$${voucher.price}` : "Free"} />
 
                   {role === "user" && userBalance !== undefined ? (
-                    <InfoItem icon={CheckBadgeIcon} label="Your Balance" value={`${userBalance} unit${userBalance !== 1 ? 's' : ''}`}/>
+                    <InfoItem icon={CheckBadgeIcon} label="Your Balance" value={`${userBalance} unit${userBalance !== 1 ? 's' : ''}`} />
                   ) : (
                     <InfoItem icon={CubeIcon} label="Max Mint" value={voucher.maxMint || "Unlimited"} />
                   )}
@@ -97,6 +114,47 @@ export default function VoucherModal({ voucher, role, userBalance, onClose, expi
                   <h3 className="text-sm font-semibold text-gray-600 dark:text-slate-400 mb-3">Blockchain Data</h3>
                   <InfoItem icon={DocumentTextIcon} label="IPFS Metadata" value={`${voucher.metadataCID.slice(0, 12)}.....${voucher.metadataCID.slice(-8)}`}
                   />
+                </div>
+              )}
+
+              {hasAnyRedemptions && (
+                <div className="bg-gray-50 dark:bg-slate-700/50 rounded-lg p-4 mt-4">
+                  <h3 className="text-sm font-semibold text-gray-600 dark:text-slate-400 mb-3">Redemption History</h3>
+
+                  <div className="text-sm text-slate-700 dark:text-slate-300 mb-3">
+                    <div><strong>Total Redeemed:</strong> {totalRedeemed}</div>
+                    <div><strong>Remaining:</strong> {remainingUnits} {maxMintNum ? `of ${maxMintNum}` : ""}</div>
+                  </div>
+
+                  <ul className="divide-y divide-gray-100 dark:divide-slate-700 max-h-48 overflow-auto text-sm">
+                    {voucher.redemptions.map((r, i) => (
+                      <li key={i} className="py-2 flex justify-between items-start gap-3">
+                        <div className="min-w-0">
+                          <div className="truncate text-xs text-gray-600 dark:text-slate-400">Redeemer</div>
+                          <div className="text-sm font-medium text-slate-900 dark:text-white break-words">
+                            {r.redeemer || r.user || r.address}
+                          </div>
+                          <div className="text-xs text-gray-500 dark:text-slate-400">
+                            {r.redeemedAt ? new Date(r.redeemedAt).toLocaleString() : (r.timestamp ? new Date(r.timestamp * 1000).toLocaleString() : "")}
+                          </div>
+                        </div>
+
+                        <div className="text-right min-w-[90px] text-gray-400">
+                          <div className="text-sm font-semibold">{r.amount}</div>
+                          {r.txHash && (
+                            <a
+                              href={`https://etherscan.io/tx/${r.txHash}`} // optional: replace with chain explorer if known
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs text-blue-600 dark:text-blue-400 underline"
+                            >
+                              View Tx
+                            </a>
+                          )}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               )}
             </div>
