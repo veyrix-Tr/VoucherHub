@@ -1,10 +1,8 @@
 import React from "react";
 import { useWallet } from "../Context/WalletContext.jsx";
 import metamaskIcon from "../public/images/metamask-icon.png";
-import { useRole } from "../Context/RoleContext.jsx";
 
 export default function ConnectPage() {
-  const { role } = useRole();
   const { connectWallet } = useWallet();
 
   return (
@@ -71,7 +69,7 @@ export default function ConnectPage() {
         </p>
 
         <button
-          onClick={() => connectWallet(role)}
+          onClick={() => connectWallet()}
           style={{
             padding: "18px 28px",
             width: "100%",

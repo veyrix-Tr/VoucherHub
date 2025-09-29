@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { ethers } from "ethers";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import { detectUserRole } from "../utils/roleDetection.js";
 
 const WALLET_STORAGE_KEY = "voucher_swap_wallet_state";
 
@@ -37,6 +38,15 @@ export const WalletProvider = ({ children }) => {
             localStorage.setItem(WALLET_STORAGE_KEY, JSON.stringify({ 
               account: address 
             }));
+            
+            try {
+              const userRole = await detectUserRole(address, provider);
+              console.log(`Restored wallet - detected role: ${userRole}`);
+              navigate(`/${userRole}`);
+            } catch (roleError) {
+              console.error("Error detecting role on restore:", roleError);
+              navigate("/user");
+            }
           }
         }
       } catch (error) {
@@ -49,7 +59,6 @@ export const WalletProvider = ({ children }) => {
 
     checkWalletConnection();
 
-    // Handle account changes
     const handleAccountsChanged = (accounts) => {
       if (accounts.length === 0) {
         disconnectWallet();
@@ -69,7 +78,7 @@ export const WalletProvider = ({ children }) => {
     };
   }, [account]);
 
-  const connectWallet = async (role) => {
+  const connectWallet = async () => {
     if (typeof window === "undefined" || !window.ethereum) {
       toast.error("Please Install MetaMask");
       return;
@@ -95,9 +104,25 @@ export const WalletProvider = ({ children }) => {
         showProgressBar: true
       });
 
-      if (role) {
-        navigate(`/${role}`);
+      toast.loading("Detecting your role...", { id: "role-detection" });
+      
+      try {
+        const userRole = await detectUserRole(address, provider);
+        console.log(`Detected role: ${userRole} for address: ${address}`);
+        
+        toast.success(`Welcome ${userRole}!`, { 
+          id: "role-detection",
+          duration: 2000 
+        });
+        
+        navigate(`/${userRole}`);
+        
+      } catch (roleError) {
+        console.error("Error detecting role:", roleError);
+        toast.error("Error detecting role, defaulting to user", { id: "role-detection" });
+        navigate("/user");
       }
+      
     } catch (error) {
       console.error("Error connecting wallet:", error);
       toast.error("Failed to connect wallet");

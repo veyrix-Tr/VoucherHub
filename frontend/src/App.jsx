@@ -6,10 +6,10 @@ import ConnectPage from "./Pages/ConnectPage.jsx";
 import MerchantPage from "./Pages/MerchantPage.jsx";
 import AdminPage from "./Pages/AdminPage.jsx";
 import Marketplace from "./Pages/Marketplace.jsx";
-import ConnectWallet from "./Components/connect/ConnectWallet.jsx";
 import UserPage from "./Pages/UserPage.jsx";
 import AdminMerchantRequests from "./Components/admin/AdminMerchantRequests.jsx";
 import { Layout } from "./Components/common/Layout.jsx";
+import ProtectedRoute from "./Components/common/ProtectedRoute.jsx";
 
 export default function App() {
   return (
@@ -17,11 +17,22 @@ export default function App() {
       <Routes>
         <Route path="/" element={<ConnectPage />} />
         <Route element={<Layout />}>
-          <Route path="/merchant" element={<MerchantPage />} />
-          <Route path="/admin" element={<AdminPage />} />
-          <Route path="/admin/merchant-requests" element={<AdminMerchantRequests />} />
+          <Route path="/merchant" element={
+            <ProtectedRoute requiredRole="merchant">
+              <MerchantPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin" element={
+            <ProtectedRoute requiredRole="admin">
+              <AdminPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/merchant-requests" element={
+            <ProtectedRoute requiredRole="admin">
+              <AdminMerchantRequests />
+            </ProtectedRoute>
+          } />
           <Route path="/marketplace" element={<Marketplace />} />
-          <Route path="/wallet" element={<ConnectWallet />} />
           <Route path="/user" element={<UserPage />} />
         </Route>
       </Routes>
