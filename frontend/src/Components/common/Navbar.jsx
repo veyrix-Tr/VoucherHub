@@ -28,7 +28,7 @@ const Navbar = ({ currentRole, roleConfig }) => {
             <img src={voucherLogo} alt="Logo" className=' w-18 absolute' />
           </div>
           <NavLink to={`/${currentRole}`} className="flex items-center gap-2 brand text-5xl">
-            VoucherSwap
+            VoucherHub
           </NavLink>
         </div>
 
@@ -55,7 +55,7 @@ const Navbar = ({ currentRole, roleConfig }) => {
             )}
           </NavLink>
 
-          <a href="https://github.com/veyrix-Tr/VoucherSwap/" target="_blank" rel="noopener noreferrer" className="text-gray-200 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 flex">
+          <a href="https://github.com/veyrix-Tr/VoucherHub/" target="_blank" rel="noopener noreferrer" className="text-gray-200 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 flex">
             <img src={githubIcon} alt="" className='w-7 absolute' />
             <span className='relative pt-1 pl-9 text-[21px]'>GitHub Repo</span>
           </a>

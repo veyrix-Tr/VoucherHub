@@ -21,7 +21,7 @@ export default function ConnectPage() {
       animation: "fadeIn 0.3s ease-out"
     }}>
       <div className="brand text-[70px]">
-        VoucherSwap
+        VoucherHub
       </div>
       <div style={{
         background: "rgba(255, 255, 255, 0.04)",

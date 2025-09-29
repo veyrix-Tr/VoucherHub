@@ -2,6 +2,7 @@ import React from "react";
 import discordIcon from "../../public/images/Discord-icon.png"
 import githubIcon from "../../public/images/github-icon.png"
 import twitterIcon from "../../public/images/twitter-icon.png"
+import voucherLogo from "../../public/images/voucher-logo.png"
 import { useLocation } from "react-router-dom";
 
 export default function Footer() {
@@ -20,13 +21,12 @@ export default function Footer() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           <div className="lg:col-span-2">
             <div className="flex items-center gap-4 mb-5">
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center shadow-lg">
-                {/* logo */}
-                <img src="" alt="VoucherSwap logo" className="w-8 h-8 object-contain filter brightness-0 invert" />
+              <div className="w-14 h-14 rounded-xl flex items-center justify-center shadow-lg">
+                <img src={voucherLogo} alt="VoucherHub logo" className="w-14 h-14 object-contain" />
               </div>
               <div>
                 <h2 className="text-[33px] font-extrabold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-                  VoucherSwap
+                  VoucherHub
                 </h2>
                 <div className="mt-1 flex items-baseline gap-3">
                   <span className="text-sm text-gray-400">by</span>
@@ -47,7 +47,7 @@ export default function Footer() {
             </p>
 
             <div className="flex items-center justify-content gap-3">
-              <a href="https://github.com/veyrix-Tr/VoucherSwap" target="_blank" rel="noopener noreferrer"
+              <a href="https://github.com/veyrix-Tr/VoucherHub" target="_blank" rel="noopener noreferrer"
                 className="flex items-center group p-2 rounded-xl bg-gray-800 hover:bg-gray-700 transition-all duration-300 hover:scale-110 shadow-lg h-11 w-11">
                 <img src={githubIcon} alt="GitHub" />
               </a>
@@ -87,7 +87,7 @@ export default function Footer() {
               <span className="absolute bottom-0 left-0 w-1/2 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500"></span>
             </h3>
             <ul className="space-y-3">
-              <li><a href="https://github.com/veyrix-Tr/VoucherSwap/blob/main/README.md" className="text-gray-400 hover:text-white transition-colors duration-200 flex items-center gap-2 group">
+              <li><a href="https://github.com/veyrix-Tr/VoucherHub/blob/main/README.md" className="text-gray-400 hover:text-white transition-colors duration-200 flex items-center gap-2 group">
                 <span className="w-1 h-1 bg-gray-600 rounded-full group-hover:bg-blue-500"></span>
                 Documentation
               </a></li>
@@ -109,7 +109,7 @@ export default function Footer() {
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="text-gray-400 text-sm">
-              © {year} VoucherSwap Protocol. All rights reserved.
+              © {year} VoucherHub Protocol. All rights reserved.
             </div>
 
             <div className="flex items-center gap-6 text-sm">
