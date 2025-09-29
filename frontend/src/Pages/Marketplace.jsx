@@ -91,7 +91,7 @@ export default function Marketplace() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 
       dark:from-slate-900 dark:via-slate-900 dark:to-slate-900 transition-colors">
-      <div className="max-w-9xl mx-auto px-6 lg:px-15 pt-12 pb-25">
+      <div className="max-w-9xl mx-auto px-6 lg:px-15 pt-12 pb-32">
         <div className="flex items-center gap-2 mb-8">
           <Link to={`/${role}`} className="inline-flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-white transition-colors group" >
             <ArrowLeftIcon className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />

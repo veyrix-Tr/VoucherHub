@@ -18,14 +18,14 @@ export default function MyVouchers({ activeSection }) {
 
   const loadVouchers = async () => {
     if (account) {
-     await fetchVouchersByOwner(account, setVouchers, setLoading);
-    } else if(!isInitializing) {
+      await fetchVouchersByOwner(account, setVouchers, setLoading);
+    } else if (!isInitializing) {
       toast.error("Please connect your wallet first");
     }
   };
 
   const now = Math.floor(Date.now() / 1000);
-  
+
   const getFilteredVouchers = () => {
     switch (activeSection) {
       case "active":
@@ -33,7 +33,11 @@ export default function MyVouchers({ activeSection }) {
       case "expired":
         return vouchers.filter((v) => v.status !== "redeemed" && Number(v.expiry) <= now);
       case "redeemed":
-        return vouchers.filter((v) => v.status === "redeemed");
+        return vouchers.filter((v) =>
+          (v.redemptions || []).some(r =>
+            r.redeemer?.toLowerCase() === account.toLowerCase()
+          )
+        );
       default:
         return vouchers;
     }
@@ -50,7 +54,7 @@ export default function MyVouchers({ activeSection }) {
   const getSectionTitle = () => {
     const titles = {
       active: "Active Vouchers",
-      expired: "Expired Vouchers", 
+      expired: "Expired Vouchers",
       redeemed: "Redeemed Vouchers"
     };
     return titles[activeSection] || "My Vouchers";
@@ -98,8 +102,8 @@ export default function MyVouchers({ activeSection }) {
               No {activeSection} vouchers found
             </h3>
             <p className="text-slate-600 dark:text-slate-300">
-              {activeSection === "active" 
-                ? "Your active vouchers will appear here" 
+              {activeSection === "active"
+                ? "Your active vouchers will appear here"
                 : `You don't have any ${activeSection} vouchers yet`
               }
             </p>
@@ -107,8 +111,8 @@ export default function MyVouchers({ activeSection }) {
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredVouchers.map(v => (
-              <VoucherCard key={v._id} voucher={v} role="user" userBalance={v.balance || 0} 
-              onRedeem={activeSection === "active" ? setRedeemingVoucher : undefined}/>
+              <VoucherCard key={v._id} voucher={v} role="user" userBalance={v.balance || 0}
+                onRedeem={activeSection === "active" ? setRedeemingVoucher : undefined} />
             ))}
           </div>
         )}

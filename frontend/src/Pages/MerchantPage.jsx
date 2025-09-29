@@ -44,7 +44,7 @@ export default function MerchantPage() {
   const loadVouchers = async () => {
     if (account) {
       await fetchVouchersByMerchant(account, setVouchers, setLoading);
-    } else if(!isInitializing) {
+    } else if (!isInitializing) {
       toast.error("Please connect your wallet first");
     }
   };
@@ -77,16 +77,14 @@ export default function MerchantPage() {
     },
   };
 
-  const grouped = useMemo(() => {
-    return vouchers.reduce((acc, v) => {
-      acc[v.status] = [...(acc[v.status] || []), v];
-      return acc;
-    }, {});
-  }, [vouchers]);
+  const approved = useMemo(() => vouchers.filter(v => v.status === "approved"), [vouchers]);
+  const pending = useMemo(() => vouchers.filter(v => v.status === "pending"), [vouchers]);
+  const rejected = useMemo(() => vouchers.filter(v => v.status === "rejected"), [vouchers]);
+  const redeemedAny = useMemo(() => vouchers.filter(v => v.redemptions && v.redemptions.length > 0), [vouchers]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-900 transition-colors">
-      <div className="max-w-9xl mx-auto px-6 sm:px-16 lg:px-13 py-8">
+      <div className="max-w-9xl mx-auto px-6 sm:px-16 lg:px-13 pt-12 pb-32">
         <div className="mb-8">
           <h1 className="text-4xl lg:text-5xl font-extrabold bg-gradient-to-r from-blue-600 100 via-pink-400 to-pink-800 bg-clip-text text-transparent">
             Merchant Dashboard
@@ -114,7 +112,13 @@ export default function MerchantPage() {
             </div>
 
             <MyVouchers
-              loading={loading} activeTab={activeTab} setActiveTab={setActiveTab} loadVouchers={loadVouchers} statusConfig={statusConfig} grouped={grouped} signer={signer}
+              loading={loading} activeTab={activeTab} setActiveTab={setActiveTab} loadVouchers={loadVouchers} statusConfig={statusConfig} signer={signer}
+              lists={{
+                approved: approved,
+                pending,
+                rejected,
+                redeemed: redeemedAny
+              }}
             />
           </div>
 
@@ -122,12 +126,20 @@ export default function MerchantPage() {
             <div className="sticky top-24">
               <div className="rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl p-6 space-y-4 bg-white/90 dark:bg-slate-900/80">
                 <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Voucher Stats</h3>
-                {Object.entries(statusConfig).map(([key, { label, color }]) => (
-                  <div key={key} className={`flex justify-between items-center p-3 ${colorClasses[color].bg} rounded-lg`}>
-                    <span className={`font-medium ${colorClasses[color].label}`}>{label}</span>
-                    <span className={`text-lg font-bold ${colorClasses[color].value}`}>{(grouped[key] || []).length}</span>
-                  </div>
-                ))}
+                {Object.entries(statusConfig).map(([key, { label, color }]) => {
+                  const counts = {
+                    approved: approved.length,
+                    pending: pending.length,
+                    rejected: rejected.length,
+                    redeemed: redeemedAny.length
+                  };
+                  return (
+                    <div key={key} className={`flex justify-between items-center p-3 ${colorClasses[color].bg} rounded-lg`}>
+                      <span className={`font-medium ${colorClasses[color].label}`}>{label}</span>
+                      <span className={`text-lg font-bold ${colorClasses[color].value}`}>{counts[key] || 0}</span>
+                    </div>
+                  );
+                })}
                 <div className="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-700 rounded-lg">
                   <span className="text-slate-700 dark:text-slate-300 font-medium">Total</span>
                   <span className="text-lg font-bold text-slate-900 dark:text-white">{vouchers.length}</span>

@@ -22,14 +22,20 @@ export default function VoucherCard({
   const daysUntilExpiry = expiryDate ? Math.ceil((expiryDate - new Date()) / (1000 * 60 * 60 * 24)) : null;
 
   const getStatusBadge = () => {
-    if (isExpired) {
-      return { label: "Expired", color: "bg-red-100 text-red-800 border-red-200" };
-    } else if (daysUntilExpiry !== null && daysUntilExpiry <= 3) {
-      return { label: "Expiring Soon", color: "bg-orange-100 text-orange-800 border-orange-200" };
-    } else if (voucher.status === "approved") {
+    if (voucher.status === "approved") {
+      if (isExpired) {
+        return { label: "Expired", color: "bg-red-100 text-red-800 border-red-200" };
+      } else if (daysUntilExpiry !== null && daysUntilExpiry <= 3) {
+        return { label: "Expiring Soon", color: "bg-orange-100 text-orange-800 border-orange-200" };
+      }
       return { label: "Verified", color: "bg-emerald-100 text-emerald-800 border-emerald-200" };
+      
     } else if (voucher.status === "pending") {
       return { label: "Pending", color: "bg-yellow-100 text-yellow-800 border-yellow-200" };
+    } else if (voucher.status === "rejected") {
+      return { label: "Rejected", color: "bg-red-100 text-red-800 border-red-200" };
+    } else if (voucher.status === "redeemed") {
+      return { label: "Redeemed", color: "bg-blue-100 text-blue-800 border-blue-200" };
     }
     return { label: "Active", color: "bg-blue-100 text-blue-800 border-blue-200" };
   };

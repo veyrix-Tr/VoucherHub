@@ -23,13 +23,13 @@ export default function VoucherModal({ voucher, role, userBalance, onClose, expi
   );
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-500 flex items-center justify-center p-4">
       <div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         onClick={onClose}
       />
 
-      <div className="relative bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-lg w-full max-h-[95vh] overflow-hidden transform transition-all border border-slate-200 dark:border-slate-700">
+      <div className="relative bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-lg w-full max-h-[125vh] overflow-hidden transform transition-all border border-slate-200 dark:border-slate-700">
         <div className="flex items-center justify-between p-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-slate-700 dark:to-slate-900 border-b border-blue-100 dark:border-slate-700">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
@@ -130,20 +130,20 @@ export default function VoucherModal({ voucher, role, userBalance, onClose, expi
                     {voucher.redemptions.map((r, i) => (
                       <li key={i} className="py-2 flex justify-between items-start gap-3">
                         <div className="min-w-0">
-                          <div className="truncate text-xs text-gray-600 dark:text-slate-400">Redeemer</div>
+                          <div className="truncate text-xs text-gray-600 dark:text-slate-400 pb-1">Redeemer</div>
                           <div className="text-sm font-medium text-slate-900 dark:text-white break-words">
                             {r.redeemer || r.user || r.address}
                           </div>
-                          <div className="text-xs text-gray-500 dark:text-slate-400">
+                          <div className="text-xs text-gray-500 dark:text-slate-400 pt-2">
                             {r.redeemedAt ? new Date(r.redeemedAt).toLocaleString() : (r.timestamp ? new Date(r.timestamp * 1000).toLocaleString() : "")}
                           </div>
                         </div>
 
-                        <div className="text-right min-w-[90px] text-gray-400">
-                          <div className="text-sm font-semibold">{r.amount}</div>
+                        <div className="text-right min-w-[50px] text-gray-400">
+                          <div className="text-sm font-semibold bg-gray-50 dark:bg-slate-600/50 rounded-lg mb-1 flex items-center justify-center">{r.amount}</div>
                           {r.txHash && (
                             <a
-                              href={`https://etherscan.io/tx/${r.txHash}`} // optional: replace with chain explorer if known
+                              href={`https://etherscan.io/tx/${r.txHash}`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-xs text-blue-600 dark:text-blue-400 underline"

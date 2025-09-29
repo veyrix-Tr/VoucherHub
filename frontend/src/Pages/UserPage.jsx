@@ -9,7 +9,7 @@ export default function UserPage() {
     <main className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 
       dark:from-slate-900 dark:via-slate-900 dark:to-slate-900 transition-colors">
 
-      <div className="max-w-9xl mx-auto px-6 lg:px-15 pt-12 pb-24">
+      <div className="max-w-9xl mx-auto px-6 lg:px-15 pt-12 pb-32">
         <div className="mb-12">
           <h1 className="text-4xl lg:text-5xl font-extrabold bg-gradient-to-r 
             from-blue-600 100 via-pink-400 to-pink-800 bg-clip-text text-transparent">
@@ -55,7 +55,7 @@ export default function UserPage() {
 
             <div className="bg-white/90 dark:bg-slate-900/80 backdrop-blur-sm 
               rounded-2xl border border-slate-200 dark:border-slate-700 
-              shadow-xl p-8 transition-all">
+              shadow-xl p-8 transition-all mt-20">
               <RequestMerchantForm />
             </div>
           </section>

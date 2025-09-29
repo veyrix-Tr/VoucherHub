@@ -3,9 +3,10 @@ import IssueVoucherModal from "./IssueVoucherModal.jsx";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import VoucherCard from "../common/VoucherCard.jsx";
 
-export default function MyVouchers({ loading, activeTab, setActiveTab, loadVouchers, statusConfig, grouped, signer }) {
-  const current = grouped[activeTab] || [];
+export default function MyVouchers({ loading, activeTab, setActiveTab, loadVouchers, statusConfig, lists, signer }) {
+  const current = lists ? lists[activeTab] : [];
   const [selectedIssueVoucher, setSelectedIssueVoucher] = useState(null);
+  const countFor = (key) => (lists && lists[key] ? lists[key].length : 0);
 
   return (
     <>
@@ -37,7 +38,7 @@ export default function MyVouchers({ loading, activeTab, setActiveTab, loadVouch
             >
               <span>{icon}</span>
               <span className="flex-1">{label}</span>
-              <span className="font-semibold">{(grouped[key] || []).length}</span>
+              <span className="font-semibold">{countFor(key)}</span>
             </button>
           ))}
         </div>
