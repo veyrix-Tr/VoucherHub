@@ -1,15 +1,17 @@
 import React, { useEffect, useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { useWallet } from "../Context/WalletContext.jsx";
 import addresses from "@contracts/exports/addresses/addresses.js";
 import merchantRegistryAbi from '@contracts/exports/abi/MerchantRegistry.json' with { type: "json" };
 import MerchantVoucherForm from "../Components/merchant/MerchantVoucherForm.jsx";
 import { fetchVouchersByMerchant } from "../utils/fetchVouchers.js";
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { PlusIcon, UserIcon } from "@heroicons/react/24/outline";
 import { toast } from "react-hot-toast";
 import MyVouchers from "../Components/merchant/MyVouchers.jsx";
 import { ethers } from "ethers";
 
 export default function MerchantPage() {
+  const navigate = useNavigate();
   const { account, signer, provider, isInitializing } = useWallet();
   const [vouchers, setVouchers] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -86,12 +88,23 @@ export default function MerchantPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-900 transition-colors">
       <div className="max-w-9xl mx-auto px-6 sm:px-16 lg:px-13 pt-12 pb-32">
         <div className="mb-8">
-          <h1 className="text-4xl lg:text-5xl font-extrabold bg-gradient-to-r from-blue-600 100 via-pink-400 to-pink-800 bg-clip-text text-transparent">
-            Merchant Dashboard
-          </h1>
-          <p className="mt-2 text-lg text-slate-600 dark:text-slate-300">
-            Create and manage your vouchers
-          </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-4xl lg:text-5xl font-extrabold bg-gradient-to-r from-blue-600 to-pink-400 bg-clip-text text-transparent">
+                Merchant Dashboard
+              </h1>
+              <p className="mt-2 text-lg text-slate-600 dark:text-slate-300">
+                Create and manage your vouchers
+              </p>
+            </div>
+            <button
+              onClick={() => navigate('/user')}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-600 to-purple-600 text-white rounded-lg hover:from-orange-700 hover:to-purple-700 transition-all shadow-sm font-medium cursor-pointer"
+            >
+              <UserIcon className="w-5 h-5" />
+              View My Vouchers
+            </button>
+          </div>
         </div>
 
         <div className="grid lg:grid-cols-4 gap-10">

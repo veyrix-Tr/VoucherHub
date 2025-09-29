@@ -39,14 +39,6 @@ export const WalletProvider = ({ children }) => {
               account: address 
             }));
             
-            try {
-              const userRole = await detectUserRole(address, provider);
-              console.log(`Restored wallet - detected role: ${userRole}`);
-              navigate(`/${userRole}`);
-            } catch (roleError) {
-              console.error("Error detecting role on restore:", roleError);
-              navigate("/user");
-            }
           }
         }
       } catch (error) {

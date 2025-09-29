@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { ethers } from "ethers";
+import { useNavigate } from "react-router-dom";
 import { useWallet } from "../Context/WalletContext.jsx";
 import VoucherABI from "@contracts/exports/abi/VoucherERC1155.json";
 import addresses from "@contracts/exports/addresses/addresses.js";
 import { fetchVouchersByStatus } from "../utils/fetchVouchers.js";
 import VoucherCard from "../Components/common/VoucherCard.jsx";
 import AdminMerchantRequests from "../Components/admin/AdminMerchantRequests.jsx";
-import { ArrowPathIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { ArrowPathIcon, XMarkIcon, UserIcon } from "@heroicons/react/24/outline";
 import { toast } from "react-hot-toast";
 import AdminMerchantStatus from "../Components/admin/AdminMerchantStatus.jsx";
 
 export default function AdminPage() {
+  const navigate = useNavigate();
   const { signer, account, provider } = useWallet();
   const [vouchers, setVouchers] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -110,12 +112,23 @@ export default function AdminPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-900 transition-colors pt-4 pb-16">
       <div className="max-w-9xl mx-auto px-6 sm:px-16 lg:px-13 py-10">
         <div className="mb-8">
-          <h1 className="text-4xl lg:text-5xl font-extrabold bg-gradient-to-r from-blue-600 100 via-pink-400 to-pink-800 bg-clip-text text-transparent">
-            Admin Dashboard
-          </h1>
-          <p className="mt-2 text-lg text-slate-600 dark:text-slate-300">
-            Manage platform content and merchant applications
-          </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-4xl lg:text-5xl font-extrabold bg-gradient-to-r from-blue-600 to-pink-400 bg-clip-text text-transparent">
+                Admin Dashboard
+              </h1>
+              <p className="mt-2 text-lg text-slate-600 dark:text-slate-300">
+                Manage platform content and merchant applications
+              </p>
+            </div>
+            <button
+              onClick={() => navigate('/user')}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all shadow-sm font-medium cursor-pointer"
+            >
+              <UserIcon className="w-5 h-5" />
+              View My Vouchers
+            </button>
+          </div>
         </div>
 
         <div className="flex border-b border-slate-200 dark:border-slate-700 mb-8">
