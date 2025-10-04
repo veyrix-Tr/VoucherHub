@@ -75,36 +75,78 @@ VoucherHub follows a modern three-tier architecture:
 
 ```
 VoucherHub/
-├── 📂 frontend/                 # React frontend application
+│
+├── 📂 frontend/                    # React frontend application
 │   ├── 📂 src/
-│   │   ├── 📂 Components/       # Reusable UI components
-│   │   │   ├── 📂 admin/        # Admin-specific components
-│   │   │   ├── 📂 common/       # Shared components
-│   │   │   ├── 📂 connect/      # Wallet connection
-│   │   │   ├── 📂 merchant/     # Merchant dashboard
-│   │   │   └── 📂 user/         # User interface
-│   │   ├── 📂 Context/          # React context providers
-│   │   ├── 📂 Pages/            # Application pages
-│   │   └── 📂 utils/            # Utility functions & IPFS
+│   │   │
+│   │   ├── 📂 Components/          # Reusable UI components
+│   │   │   ├── 📂 admin/           # Admin-specific components
+│   │   │   ├── 📂 common/          # Shared components
+│   │   │   ├── 📂 connect/         # Wallet connection
+│   │   │   ├── 📂 merchant/        # Merchant dashboard
+│   │   │   └── 📂 user/            # User interface
+│   │   │
+│   │   ├── 📂 Context/             # React context providers
+│   │   │   ├── RoleContext.jsx     # User role management
+│   │   │   └── WalletContext.jsx   # Web3 wallet integration
+│   │   │
+│   │   ├── 📂 Pages/               # Application pages
+│   │   │   ├── AdminPage.jsx       # Admin dashboard
+│   │   │   ├── ConnectPage.jsx     # Wallet connection page
+│   │   │   ├── Marketplace.jsx     # Voucher marketplace
+│   │   │   ├── MerchantPage.jsx    # Merchant dashboard
+│   │   │   └── UserPage.jsx        # User dashboard
+│   │   │
+│   │   ├── 📂 utils/               # Utility functions & services
+│   │   │   ├── eip712.js           # EIP712 signature utilities
+│   │   │   ├── fetchVouchers.js    # Voucher data fetching
+│   │   │   ├── ipfs.js             # IPFS integration
+│   │   │   ├── roleDetection.js    # User role detection
+│   │   │   └── utilsMerchantRequests.js # Merchant request utilities
+│   │   │
+│   │   ├── App.jsx                 # Main application component
+│   │   ├── main.jsx                # Application entry point
+│   │   └── index.css               # Global styles
+│   │
 │   ├── package.json
 │   └── vite.config.js
-├── 📂 backend/                  # Express.js backend server
+│
+├── 📂 backend/                     # Express.js backend server
 │   ├── 📂 src/
-│   │   ├── 📂 config/           # Database configuration
-│   │   ├── 📂 controllers/      # Request handlers
-│   │   ├── 📂 middleware/       # Authentication & validation
-│   │   ├── 📂 models/           # Database models
-│   │   └── 📂 routes/           # API routes
+│   │   │
+│   │   ├── 📂 config/              # Configuration files
+│   │   │   └── db.js               # Database connection setup
+│   │   │
+│   │   ├── 📂 controllers/         # Request handlers
+│   │   │   ├── merchantRequestController.js # Merchant request logic
+│   │   │   └── voucherController.js # Voucher CRUD operations
+│   │   │
+│   │   ├── 📂 middleware/          # Authentication & validation
+│   │   │   ├── authMiddleware.js   # JWT authentication
+│   │   │   └── validateVoucher.js  # Voucher validation
+│   │   │
+│   │   ├── 📂 models/              # Database models
+│   │   │   ├── MerchantRequest.js  # Merchant request schema
+│   │   │   └── Voucher.js          # Voucher schema
+│   │   │
+│   │   └── 📂 routes/              # API routes
+│   │       ├── merchantRequestRoutes.js # Merchant request endpoints
+│   │       └── voucherRoutes.js    # Voucher endpoints
+│   │
 │   ├── package.json
-│   └── server.js
-├── 📂 contracts/                # Smart contracts
-│   ├── 📂 src/                  # Solidity contracts
-│   │   ├── VoucherERC1155.sol   # Main voucher contract
-│   │   └── MerchantRegistry.sol # Merchant management
-│   ├── 📂 script/               # Deployment scripts
-│   ├── 📂 test/                 # Contract tests
-│   └── foundry.toml
-└── README.md
+│   └── server.js                   # Express server entry point
+│
+├── 📂 contracts/                   # Smart contracts
+│   ├── 📂 src/                     # Solidity contracts
+│   │   ├── VoucherERC1155.sol      # Main voucher contract (ERC1155)
+│   │   └── MerchantRegistry.sol    # Merchant registration & management
+│   │
+│   ├── 📂 script/                  # Deployment scripts
+│   ├── 📂 test/                    # Contract tests
+│   └── foundry.toml                # Foundry configuration
+│
+├── 📂 spec/                        # Project specifications
+└── README.md                       # Project documentation
 ```
 
 ## 🚀 Quick Start
