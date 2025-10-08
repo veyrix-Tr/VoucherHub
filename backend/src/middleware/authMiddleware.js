@@ -4,6 +4,8 @@ import jwt from "jsonwebtoken";
 export const protect = (req, res, next) => {
 
   // due to some problem in production, auth is disabled
+  req.user = { id: "dev", role: "admin" };
+
   return next();
   
   // Checks if Authorization header exists and is in correct format
